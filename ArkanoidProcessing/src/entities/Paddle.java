@@ -3,12 +3,12 @@ package entities;
 import processing.core.PApplet;
 import processing.core.PVector;
 
-public class Racket extends Rect{
+public class Paddle extends Rect{
 
     private final static float height = 10;
     private final static float radiusAngle = 28;
 
-    public Racket(PVector position, float length, PApplet processing) {
+    public Paddle(PVector position, float length, PApplet processing) {
         super(position, length, height, processing);
     }
 

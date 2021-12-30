@@ -25,7 +25,7 @@ public class Sphere extends Entity{
         processing.ellipse(position.x,position.y, radius, radius);
     }
 
-    public void update(Racket racket, List<Brick> bricks)
+    public void update(Paddle paddle, List<Brick> bricks)
     {
         position.add(velocity);
 
@@ -45,7 +45,7 @@ public class Sphere extends Entity{
         if(velocity.y + radius >= processing.height)
             alive = false;
 
-        if(!cooldown && checkRectCollision(racket))
+        if(!cooldown && checkRectCollision(paddle))
         {
             cooldown = true;
         }

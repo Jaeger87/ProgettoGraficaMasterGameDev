@@ -1,7 +1,7 @@
 package arkanoid;
 
 import entities.Brick;
-import entities.Racket;
+import entities.Paddle;
 import entities.Sphere;
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -12,7 +12,7 @@ public class Arkanoid extends PApplet {
 
     ArrayList<Brick> bricks;
     Sphere sphere;
-    Racket racket;
+    Paddle paddle;
 
     float startBricks = 50;
     float paddingBrikcs = 5;
@@ -20,7 +20,7 @@ public class Arkanoid extends PApplet {
     public void settings(){
         size(500, 500);
         sphere = new Sphere(new PVector(400, 350), this);
-        racket = new Racket(new PVector(width / 2, height * 0.88f), width/10, this);
+        paddle = new Paddle(new PVector(width / 2, height * 0.88f), width/10, this);
         bricks = new ArrayList<>();
 
 
@@ -32,14 +32,14 @@ public class Arkanoid extends PApplet {
 
     public void draw(){
         background(255);
-        racket.getInput(mouseX);
-        racket.display();
+        paddle.getInput(mouseX);
+        paddle.display();
 
         for (Brick b: bricks) {
             b.display();
         }
 
-        sphere.update(racket, bricks);
+        sphere.update(paddle, bricks);
         sphere.display();
 
 
