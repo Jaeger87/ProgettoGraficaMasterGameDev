@@ -83,10 +83,12 @@ void Game::Render()
     PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Render");
 
     // TODO: Add your rendering code here.
+    float time = float(m_timer.GetTotalSeconds());
+
     m_spriteBatch->Begin();
 
     m_spriteBatch->Draw(m_texture.Get(), m_screenPos, nullptr,
-        Colors::White, 0.f, m_origin);
+        Colors::Green, 0.f, m_origin);
 
     m_spriteBatch->End();
 
@@ -181,12 +183,13 @@ void Game::CreateDeviceDependentResources()
     auto device = m_deviceResources->GetD3DDevice();
 
     // TODO: Initialize device dependent objects here (independent of window size).
+    m_states = std::make_unique<CommonStates>(device);
     auto context = m_deviceResources->GetD3DDeviceContext();
     m_spriteBatch = std::make_unique<SpriteBatch>(context);
 
     ComPtr<ID3D11Resource> resource;
     DX::ThrowIfFailed(
-        CreateWICTextureFromFile(device, L"Assets//cat.png",
+        CreateDDSTextureFromFile(device, L"Assets//cat.dds",
             resource.GetAddressOf(),
             m_texture.ReleaseAndGetAddressOf()));
 
@@ -214,6 +217,7 @@ void Game::OnDeviceLost()
 {
     m_texture.Reset();
     m_spriteBatch.reset();
+    m_states.reset();
     // TODO: Add Direct3D resource cleanup here.
 }
 

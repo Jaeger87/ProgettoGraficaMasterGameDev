@@ -21,7 +21,11 @@ bool Sphere::linePoint(Vec2& point1, Vec2& point2, float lineLen, Vec2& pointX)
 	return false;
 }
 
-void Sphere::update(Paddle paddle, Brick* bricks, int bricksLength)
+Sphere::Sphere(Vec2 _position) : Entity(_position)
+{
+}
+
+void Sphere::update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall)
 {
     position += velocity;
 

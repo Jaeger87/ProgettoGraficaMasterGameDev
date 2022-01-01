@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "Paddle.h"
 #include "Brick.h"
+#include "Wall.h"
 
 class Sphere : Entity 
 {
@@ -17,6 +18,7 @@ private:
 	bool pointCircle(Vec2& point);
 	bool linePoint(Vec2& point1, Vec2& point2, float lineLen, Vec2& pointX);
 public:
-	void update(Paddle paddle, Brick* bricks, int bricksLength);
+	Sphere(Vec2 _position);
+	void update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall);
 	
 };

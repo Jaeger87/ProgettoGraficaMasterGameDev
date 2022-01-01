@@ -316,6 +316,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Assets\cat.dds" />
     <Image Include="Assets\cat.png" />
     <Image Include="Assets\Logo.scale-200.png" />
     <Image Include="Assets\SmallLogo.scale-200.png" />
