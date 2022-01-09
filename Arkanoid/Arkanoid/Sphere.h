@@ -7,9 +7,10 @@
 class Sphere : Entity 
 {
 private:
+	static Color sphereColor;
 	Vec2 velocity;
-	const float radius = 11;
-	const float SQUARERADIUS = 11 ^ 2;
+	const float radius = 12;
+	const float SQUARERADIUS = 12 ^ 2;
 	bool alive = true;
 	bool cooldown = false;
 	enum RECTCOLLISIONTYPE { LENGTH, WIDTH };
@@ -20,6 +21,6 @@ private:
 public:
 	Sphere(Vec2 _position);
 	void update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall);
-	void display() override;
+	void display(DirectX::SpriteBatch* i_spriteBatch) override;
 	
 };

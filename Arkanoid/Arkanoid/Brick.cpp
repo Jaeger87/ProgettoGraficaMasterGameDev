@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "Brick.h"
 
-Color Brick::ColorFullLife = { { { 1.000000000f, 0.05f, 1.000000000f, 1.000000000f } } };
+Color Brick::ColorFullLife = { { { 0.1f, 1.000000000f, 0.1f, 1.000000000f } } };
+Color Brick::ColorHalfLife = { { { 1.000000000f, 0.1f, 0.1f, 1.000000000f } } };
 
-void Brick::display()
+void Brick::display(DirectX::SpriteBatch* i_spriteBatch)
 {
     
 }

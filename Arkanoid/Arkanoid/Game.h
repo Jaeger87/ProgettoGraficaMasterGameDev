@@ -5,6 +5,7 @@
 #pragma once
 
 #include "StepTimer.h"
+#include <Sphere.h>
 
 
 // A basic game implementation that creates a D3D11 device and
@@ -65,6 +66,12 @@ private:
     Microsoft::WRL::ComPtr<IDXGISwapChain3>         m_swapChain;
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView>  m_renderTargetView;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilView>  m_depthStencilView;
+
+    std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
+    std::unique_ptr<DirectX::CommonStates> m_states;
     // Rendering loop timer.
     DX::StepTimer                                   m_timer;
+
+    //Entities
+    Sphere sphere;
 };

@@ -23,6 +23,10 @@
 #include <memory>
 #include <stdexcept>
 
+
+#include "BufferHelpers.h"
+#include "CommonStates.h"
+#include "DDSTextureLoader.h"
 #include "SimpleMath.h"
 #include "SpriteBatch.h"
 #include "WICTextureLoader.h"

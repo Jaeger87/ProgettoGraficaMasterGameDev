@@ -16,7 +16,8 @@ Game::Game() noexcept :
     m_outputWidth(800),
     m_outputHeight(600),
     m_outputRotation(DXGI_MODE_ROTATION_IDENTITY),
-    m_featureLevel(D3D_FEATURE_LEVEL_9_1)
+    m_featureLevel(D3D_FEATURE_LEVEL_9_1),
+    sphere(Vec2(300,300))
 {
 }
 
@@ -392,6 +393,7 @@ void Game::OnDeviceLost()
     m_swapChain.Reset();
     m_d3dContext.Reset();
     m_d3dDevice.Reset();
+    m_spriteBatch.reset();
 
     CreateDevice();
 

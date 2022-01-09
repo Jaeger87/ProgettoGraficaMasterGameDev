@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "Sphere.h"
 
+
+Color Sphere::sphereColor = { { { 0.1f, 1.000000000f, 0.1f, 1.000000000f } } };
+
+
 bool Sphere::checkRectCollision(Rect& rect)
 {
 	return false;
@@ -23,6 +27,7 @@ bool Sphere::linePoint(Vec2& point1, Vec2& point2, float lineLen, Vec2& pointX)
 
 Sphere::Sphere(Vec2 _position) : Entity(_position)
 {
+
 }
 
 void Sphere::update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall)
@@ -63,6 +68,8 @@ void Sphere::update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftW
     }
 }
 
-void Sphere::display()
+void Sphere::display(DirectX::SpriteBatch *i_spriteBatch)
 {
+    i_spriteBatch->Draw(m_texture->Get(), position, nullptr,
+        sphereColor, 0.f, m_origin, 0.75f);
 }

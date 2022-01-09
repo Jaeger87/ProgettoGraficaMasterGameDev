@@ -5,7 +5,7 @@ Paddle::Paddle(Vec2 position, float length) : Rect(position, length, height)
 {
 }
 
-void Paddle::display()
+void Paddle::display(DirectX::SpriteBatch* i_spriteBatch)
 {
 }
 

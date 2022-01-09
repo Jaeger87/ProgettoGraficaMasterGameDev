@@ -9,6 +9,6 @@ private:
 public:
 
 	Paddle(Vec2 position, float length);
-	void display() override;
+	void display(DirectX::SpriteBatch* i_spriteBatch) override;
 	void getInput(float newX);
 };

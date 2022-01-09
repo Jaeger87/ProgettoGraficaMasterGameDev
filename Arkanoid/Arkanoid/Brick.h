@@ -25,13 +25,13 @@ class Brick : public Rect
 {
 private:
 	static Color ColorFullLife;
-
+	static Color ColorHalfLife;
 public:
 	enum LIFEBRICK { FULL, HALF, DEAD };
 	LIFEBRICK life;
 	const float BWIDTH = 20;
 	const float BHEIGHT = 10;
-	void display() override;
+	void display(DirectX::SpriteBatch* i_spriteBatch) override;
 	bool isAlive();
 	void hit();
 
