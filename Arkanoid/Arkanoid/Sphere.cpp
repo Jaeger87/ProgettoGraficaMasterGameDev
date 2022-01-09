@@ -62,3 +62,7 @@ void Sphere::update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftW
 
     }
 }
+
+void Sphere::display()
+{
+}

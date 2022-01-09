@@ -254,9 +254,9 @@
     <ClInclude Include="Paddle.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="ScrollingBackground.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="StepTimer.h" />
-    <ClInclude Include="Vec2.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
   <ItemGroup>
@@ -277,7 +277,6 @@
     </ClCompile>
     <ClCompile Include="Rect.cpp" />
     <ClCompile Include="Sphere.cpp" />
-    <ClCompile Include="Vec2.cpp" />
     <ClCompile Include="Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -290,6 +289,7 @@
   <ItemGroup>
     <Image Include="Assets\Logo.scale-200.png" />
     <Image Include="Assets\SmallLogo.scale-200.png" />
+    <Image Include="Assets\sphere_32x32.png" />
     <Image Include="Assets\SplashScreen.scale-200.png" />
     <Image Include="Assets\StoreLogo.png" />
     <Image Include="Assets\WideLogo.scale-200.png" />

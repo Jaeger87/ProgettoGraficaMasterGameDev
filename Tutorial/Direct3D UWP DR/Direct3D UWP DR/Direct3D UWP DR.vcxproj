@@ -291,6 +291,7 @@
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="ScrollingBackground.h" />
     <ClInclude Include="StepTimer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -320,7 +321,9 @@
     <Image Include="Assets\cat.png" />
     <Image Include="Assets\Logo.scale-200.png" />
     <Image Include="Assets\SmallLogo.scale-200.png" />
+    <Image Include="Assets\sphere_32x32.png" />
     <Image Include="Assets\SplashScreen.scale-200.png" />
+    <Image Include="Assets\starfield.png" />
     <Image Include="Assets\StoreLogo.png" />
     <Image Include="Assets\WideLogo.scale-200.png" />
   </ItemGroup>

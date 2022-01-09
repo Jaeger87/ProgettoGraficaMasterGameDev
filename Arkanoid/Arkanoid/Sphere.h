@@ -20,5 +20,6 @@ private:
 public:
 	Sphere(Vec2 _position);
 	void update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall);
+	void display() override;
 	
 };

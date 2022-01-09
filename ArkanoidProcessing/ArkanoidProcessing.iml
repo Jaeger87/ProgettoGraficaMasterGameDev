@@ -14,5 +14,7 @@
     <orderEntry type="library" name="gluegen-rt-natives-windows-amd64" level="project" />
     <orderEntry type="library" name="gluegen-rt" level="project" />
     <orderEntry type="library" name="core" level="project" />
+    <orderEntry type="library" name="core" level="project" />
+    <orderEntry type="library" name="jogl-all-natives-windows-amd64" level="project" />
   </component>
 </module>

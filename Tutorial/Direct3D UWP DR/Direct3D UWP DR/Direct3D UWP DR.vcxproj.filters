@@ -26,6 +26,7 @@
     <ClInclude Include="DeviceResources.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="ScrollingBackground.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Logo.scale-200.png">
@@ -47,6 +48,12 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\cat.dds">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\starfield.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\sphere_32x32.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>

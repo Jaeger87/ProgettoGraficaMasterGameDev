@@ -23,6 +23,10 @@
 #include <memory>
 #include <stdexcept>
 
+#include "SimpleMath.h"
+#include "SpriteBatch.h"
+#include "WICTextureLoader.h"
+
 #ifdef _DEBUG
 #include <dxgidebug.h>
 #endif

@@ -19,9 +19,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="Vec2.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="Rect.cpp">
       <Filter>source</Filter>
     </ClCompile>
@@ -57,9 +54,6 @@
     <ClInclude Include="Entity.h">
       <Filter>headers</Filter>
     </ClInclude>
-    <ClInclude Include="Vec2.h">
-      <Filter>headers</Filter>
-    </ClInclude>
     <ClInclude Include="Rect.h">
       <Filter>headers</Filter>
     </ClInclude>
@@ -73,6 +67,9 @@
       <Filter>headers</Filter>
     </ClInclude>
     <ClInclude Include="Wall.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ScrollingBackground.h">
       <Filter>headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -90,6 +87,9 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\WideLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\sphere_32x32.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>

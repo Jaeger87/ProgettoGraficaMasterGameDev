@@ -9,6 +9,6 @@ private:
 public:
 
 	Paddle(Vec2 position, float length);
-	void display();
+	void display() override;
 	void getInput(float newX);
 };

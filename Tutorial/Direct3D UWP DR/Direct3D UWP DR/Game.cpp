@@ -61,8 +61,9 @@ void Game::Update(DX::StepTimer const& timer)
     float elapsedTime = float(timer.GetElapsedSeconds());
 
     // TODO: Add your game logic here.
+    m_stars->Update(elapsedTime * 100);
     elapsedTime;
-
+    
     PIXEndEvent();
 }
 #pragma endregion
@@ -83,12 +84,16 @@ void Game::Render()
     PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Render");
 
     // TODO: Add your rendering code here.
-    float time = float(m_timer.GetTotalSeconds());
-
     m_spriteBatch->Begin();
 
+    m_stars->Draw(m_spriteBatch.get());
+
+
+    float time = float(m_timer.GetTotalSeconds());
+    XMVECTORF32 myColor = { { { 1.000000000f, 0.05f, 1.000000000f, 1.000000000f } } };
+
     m_spriteBatch->Draw(m_texture.Get(), m_screenPos, nullptr,
-        Colors::Green, 0.f, m_origin);
+        myColor, 0.f, m_origin, 1);
 
     m_spriteBatch->End();
 
@@ -183,16 +188,28 @@ void Game::CreateDeviceDependentResources()
     auto device = m_deviceResources->GetD3DDevice();
 
     // TODO: Initialize device dependent objects here (independent of window size).
+    DX::ThrowIfFailed(CreateWICTextureFromFile(device, L"Assets//starfield.png",
+        nullptr, m_backgroundTex.ReleaseAndGetAddressOf()));
+
+    m_stars = std::make_unique<ScrollingBackground>();
+    m_stars->Load(m_backgroundTex.Get());
+
     m_states = std::make_unique<CommonStates>(device);
     auto context = m_deviceResources->GetD3DDeviceContext();
     m_spriteBatch = std::make_unique<SpriteBatch>(context);
 
     ComPtr<ID3D11Resource> resource;
     DX::ThrowIfFailed(
+        CreateWICTextureFromFile(device, L"Assets//sphere_32x32.png",
+            resource.GetAddressOf(),
+            m_texture.ReleaseAndGetAddressOf()));
+    /*
+    
+    DX::ThrowIfFailed(
         CreateDDSTextureFromFile(device, L"Assets//cat.dds",
             resource.GetAddressOf(),
             m_texture.ReleaseAndGetAddressOf()));
-
+            */
     ComPtr<ID3D11Texture2D> cat;
     DX::ThrowIfFailed(resource.As(&cat));
 
@@ -209,12 +226,15 @@ void Game::CreateWindowSizeDependentResources()
 {
     // TODO: Initialize windows-size dependent objects here.
     auto size = m_deviceResources->GetOutputSize();
+    m_stars->SetWindow(size.right, size.bottom);
     m_screenPos.x = float(size.right) / 2.f;
     m_screenPos.y = float(size.bottom) / 2.f;
 }
 
 void Game::OnDeviceLost()
 {
+    m_stars.reset();
+    m_backgroundTex.Reset();
     m_texture.Reset();
     m_spriteBatch.reset();
     m_states.reset();
