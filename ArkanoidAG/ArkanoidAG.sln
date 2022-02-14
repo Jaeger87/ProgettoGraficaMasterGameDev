@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArkanoidAG", "ArkanoidAG\ArkanoidAG.vcxproj", "{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8E3F118B-553B-4975-99B7-8D42DF498751}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|ARM64 = Debug|ARM64
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|ARM64 = Release|ARM64
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Debug|ARM.ActiveCfg = Debug|ARM
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Debug|ARM.Build.0 = Debug|ARM
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Debug|ARM.Deploy.0 = Debug|ARM
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Debug|ARM64.Build.0 = Debug|ARM64
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Debug|x64.ActiveCfg = Debug|x64
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Debug|x64.Build.0 = Debug|x64
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Debug|x64.Deploy.0 = Debug|x64
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Debug|x86.ActiveCfg = Debug|Win32
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Debug|x86.Build.0 = Debug|Win32
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Debug|x86.Deploy.0 = Debug|Win32
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Release|ARM.ActiveCfg = Release|ARM
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Release|ARM.Build.0 = Release|ARM
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Release|ARM.Deploy.0 = Release|ARM
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Release|ARM64.ActiveCfg = Release|ARM64
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Release|ARM64.Build.0 = Release|ARM64
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Release|ARM64.Deploy.0 = Release|ARM64
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Release|x64.ActiveCfg = Release|x64
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Release|x64.Build.0 = Release|x64
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Release|x64.Deploy.0 = Release|x64
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Release|x86.ActiveCfg = Release|Win32
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Release|x86.Build.0 = Release|Win32
+		{2E9AF162-9D75-4BD2-A5B3-1D7C584F1892}.Release|x86.Deploy.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2D05EB61-577F-4763-A1D6-4933DFD8F4A8}
+	EndGlobalSection
+EndGlobal
