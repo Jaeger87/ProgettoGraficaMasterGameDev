@@ -2,17 +2,17 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Common">
-      <UniqueIdentifier>b907b620-7d2d-4b3a-9086-01b3fe4879e4</UniqueIdentifier>
+      <UniqueIdentifier>60b0442c-c138-4ad3-bf18-af729ca7fc73</UniqueIdentifier>
     </Filter>
     <Filter Include="Assets">
-      <UniqueIdentifier>ca613f6a-03b0-4ef3-8806-e44f3b9f2c0d</UniqueIdentifier>
+      <UniqueIdentifier>bfacbcf3-4dfe-4760-bac1-1540c67ddd9f</UniqueIdentifier>
       <Extensions>bmp;dds;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
     </Filter>
     <Filter Include="Headers">
-      <UniqueIdentifier>{c141deae-af92-41b6-86e9-25f37c5077ae}</UniqueIdentifier>
+      <UniqueIdentifier>{d8b46aa4-3dc8-4ae3-b688-a4af79a1de2e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source">
-      <UniqueIdentifier>{40e440a2-629b-43a5-b94b-3b2b38720363}</UniqueIdentifier>
+      <UniqueIdentifier>{c3f88277-045f-4392-ade7-559b42e1c24b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -22,19 +22,19 @@
     <ClCompile Include="DeviceResources.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Brick.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
     <ClCompile Include="Entity.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Paddle.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Rect.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Sphere.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Brick.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Paddle.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Wall.cpp">
@@ -50,22 +50,19 @@
     <ClInclude Include="DeviceResources.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="d3dx12.h">
-      <Filter>Common</Filter>
+    <ClInclude Include="Brick.h">
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sphere.h">
+    <ClInclude Include="Paddle.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Rect.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Brick.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Paddle.h">
+    <ClInclude Include="Sphere.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="Wall.h">
@@ -86,6 +83,9 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\WideLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\cat.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>

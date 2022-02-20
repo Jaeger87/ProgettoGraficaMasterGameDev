@@ -1,6 +1,8 @@
 //
-// DeviceResources.cpp - A wrapper for the Direct3D 12 device and swapchain
+// DeviceResources.cpp - A wrapper for the Direct3D 11 device and swapchain
+//                       (requires DirectX 11.3 Runtime)
 //
+
 
 #include "pch.h"
 #include "DeviceResources.h"
@@ -16,6 +18,41 @@ using Microsoft::WRL::ComPtr;
 #endif
 
 #pragma warning(disable : 4061)
+
+namespace
+{
+#if defined(_DEBUG)
+    // Check for SDK Layer support.
+    inline bool SdkLayersAvailable() noexcept
+    {
+        HRESULT hr = D3D11CreateDevice(
+            nullptr,
+            D3D_DRIVER_TYPE_NULL,       // There is no need to create a real hardware device.
+            nullptr,
+            D3D11_CREATE_DEVICE_DEBUG,  // Check for the SDK layers.
+            nullptr,                    // Any feature level will do.
+            0,
+            D3D11_SDK_VERSION,
+            nullptr,                    // No need to keep the D3D device reference.
+            nullptr,                    // No need to know the feature level.
+            nullptr                     // No need to keep the D3D device context reference.
+            );
+
+        return SUCCEEDED(hr);
+    }
+#endif
+
+    inline DXGI_FORMAT NoSRGB(DXGI_FORMAT fmt) noexcept
+    {
+        switch (fmt)
+        {
+        case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:   return DXGI_FORMAT_R8G8B8A8_UNORM;
+        case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:   return DXGI_FORMAT_B8G8R8A8_UNORM;
+        case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB:   return DXGI_FORMAT_B8G8R8X8_UNORM;
+        default:                                return fmt;
+        }
+    }
+}
 
 // Constants used to calculate screen rotations
 namespace ScreenRotation
@@ -53,38 +90,20 @@ namespace ScreenRotation
         );
 }
 
-namespace
-{
-    inline DXGI_FORMAT NoSRGB(DXGI_FORMAT fmt) noexcept
-    {
-        switch (fmt)
-        {
-        case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:   return DXGI_FORMAT_R8G8B8A8_UNORM;
-        case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:   return DXGI_FORMAT_B8G8R8A8_UNORM;
-        case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB:   return DXGI_FORMAT_B8G8R8X8_UNORM;
-        default:                                return fmt;
-        }
-    }
-}
-
 // Constructor for DeviceResources.
 DeviceResources::DeviceResources(
     DXGI_FORMAT backBufferFormat,
     DXGI_FORMAT depthBufferFormat,
     UINT backBufferCount,
     D3D_FEATURE_LEVEL minFeatureLevel,
-    unsigned int flags) noexcept(false) :
-        m_backBufferIndex(0),
-        m_fenceValues{},
-        m_rtvDescriptorSize(0),
+    unsigned int flags) noexcept :
         m_screenViewport{},
-        m_scissorRect{},
         m_backBufferFormat(backBufferFormat),
         m_depthBufferFormat(depthBufferFormat),
         m_backBufferCount(backBufferCount),
         m_d3dMinFeatureLevel(minFeatureLevel),
         m_window(nullptr),
-        m_d3dFeatureLevel(D3D_FEATURE_LEVEL_11_0),
+        m_d3dFeatureLevel(D3D_FEATURE_LEVEL_9_1),
         m_rotation(DXGI_MODE_ROTATION_IDENTITY),
         m_dxgiFactoryFlags(0),
         m_outputSize{0, 0, 1, 1},
@@ -93,42 +112,27 @@ DeviceResources::DeviceResources(
         m_options(flags),
         m_deviceNotify(nullptr)
 {
-    if (backBufferCount < 2 || backBufferCount > MAX_BACK_BUFFER_COUNT)
-    {
-        throw std::out_of_range("invalid backBufferCount");
-    }
-
-    if (minFeatureLevel < D3D_FEATURE_LEVEL_11_0)
-    {
-        throw std::out_of_range("minFeatureLevel too low");
-    }
-}
-
-// Destructor for DeviceResources.
-DeviceResources::~DeviceResources()
-{
-    // Ensure that the GPU is no longer referencing resources that are about to be destroyed.
-    WaitForGpu();
 }
 
 // Configures the Direct3D device, and stores handles to it and the device context.
 void DeviceResources::CreateDeviceResources()
 {
-#if defined(_DEBUG)
-    // Enable the debug layer (requires the Graphics Tools "optional feature").
-    //
-    // NOTE: Enabling the debug layer after device creation will invalidate the active device.
-    {
-        ComPtr<ID3D12Debug> debugController;
-        if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(debugController.GetAddressOf()))))
-        {
-            debugController->EnableDebugLayer();
-        }
-        else
-        {
-            OutputDebugStringA("WARNING: Direct3D Debug Device is not available\n");
-        }
+    UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
+#if defined(_DEBUG)
+    if (SdkLayersAvailable())
+    {
+        // If the project is in a debug build, enable debugging via SDK Layers with this flag.
+        creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+    }
+    else
+    {
+        OutputDebugStringA("WARNING: Direct3D Debug Device is not available\n");
+    }
+#endif
+
+#if defined(_DEBUG)
+    {
         ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
         if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetAddressOf()))))
         {
@@ -172,127 +176,113 @@ void DeviceResources::CreateDeviceResources()
         }
     }
 
-    ComPtr<IDXGIAdapter1> adapter;
-    GetAdapter(adapter.GetAddressOf());
-
-    // Create the DX12 API device object.
-    ThrowIfFailed(D3D12CreateDevice(
-        adapter.Get(),
-        m_d3dMinFeatureLevel,
-        IID_PPV_ARGS(m_d3dDevice.ReleaseAndGetAddressOf())
-        ));
-
-    m_d3dDevice->SetName(L"DeviceResources");
-
-#ifndef NDEBUG
-    // Configure debug device (if active).
-    ComPtr<ID3D12InfoQueue> d3dInfoQueue;
-    if (SUCCEEDED(m_d3dDevice.As(&d3dInfoQueue)))
-    {
-#ifdef _DEBUG
-        d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
-        d3dInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
-#endif
-        D3D12_MESSAGE_ID hide[] =
-        {
-            D3D12_MESSAGE_ID_MAP_INVALID_NULLRANGE,
-            D3D12_MESSAGE_ID_UNMAP_INVALID_NULLRANGE,
-            // Workarounds for debug layer issues on hybrid-graphics systems
-            D3D12_MESSAGE_ID_EXECUTECOMMANDLISTS_WRONGSWAPCHAINBUFFERREFERENCE,
-            D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE,
-        };
-        D3D12_INFO_QUEUE_FILTER filter = {};
-        filter.DenyList.NumIDs = static_cast<UINT>(std::size(hide));
-        filter.DenyList.pIDList = hide;
-        d3dInfoQueue->AddStorageFilterEntries(&filter);
-    }
-#endif
-
-    // Determine maximum supported feature level for this device
+    // Determine DirectX hardware feature levels this app will support.
     static const D3D_FEATURE_LEVEL s_featureLevels[] =
     {
-#if defined(NTDDI_WIN10_FE) && (NTDDI_VERSION >= NTDDI_WIN10_FE)
-        D3D_FEATURE_LEVEL_12_2,
-#endif
         D3D_FEATURE_LEVEL_12_1,
         D3D_FEATURE_LEVEL_12_0,
         D3D_FEATURE_LEVEL_11_1,
         D3D_FEATURE_LEVEL_11_0,
+        D3D_FEATURE_LEVEL_10_1,
+        D3D_FEATURE_LEVEL_10_0,
+        D3D_FEATURE_LEVEL_9_3,
+        D3D_FEATURE_LEVEL_9_2,
+        D3D_FEATURE_LEVEL_9_1,
     };
 
-    D3D12_FEATURE_DATA_FEATURE_LEVELS featLevels =
+    UINT featLevelCount = 0;
+    for (; featLevelCount < static_cast<UINT>(std::size(s_featureLevels)); ++featLevelCount)
     {
-        static_cast<UINT>(std::size(s_featureLevels)), s_featureLevels, D3D_FEATURE_LEVEL_11_0
-    };
-
-    HRESULT hr = m_d3dDevice->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS, &featLevels, sizeof(featLevels));
-    if (SUCCEEDED(hr))
-    {
-        m_d3dFeatureLevel = featLevels.MaxSupportedFeatureLevel;
+        if (s_featureLevels[featLevelCount] < m_d3dMinFeatureLevel)
+            break;
     }
+
+    if (!featLevelCount)
+    {
+        throw std::out_of_range("minFeatureLevel too high");
+    }
+
+    ComPtr<IDXGIAdapter1> adapter;
+    GetHardwareAdapter(adapter.GetAddressOf());
+
+    // Create the Direct3D 11 API device object and a corresponding context.
+    ComPtr<ID3D11Device> device;
+    ComPtr<ID3D11DeviceContext> context;
+
+    HRESULT hr = E_FAIL;
+    if (adapter)
+    {
+        hr = D3D11CreateDevice(
+            adapter.Get(),
+            D3D_DRIVER_TYPE_UNKNOWN,
+            nullptr,
+            creationFlags,              // Set debug and Direct2D compatibility flags.
+            s_featureLevels,
+            featLevelCount,
+            D3D11_SDK_VERSION,
+            device.GetAddressOf(),      // Returns the Direct3D device created.
+            &m_d3dFeatureLevel,         // Returns feature level of device created.
+            context.GetAddressOf()      // Returns the device immediate context.
+            );
+    }
+#if defined(NDEBUG)
     else
     {
-        m_d3dFeatureLevel = m_d3dMinFeatureLevel;
+        throw std::runtime_error("No Direct3D hardware device found");
     }
-
-    // Create the command queue.
-    D3D12_COMMAND_QUEUE_DESC queueDesc = {};
-    queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-    queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-
-    ThrowIfFailed(m_d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(m_commandQueue.ReleaseAndGetAddressOf())));
-
-    m_commandQueue->SetName(L"DeviceResources");
-
-    // Create descriptor heaps for render target views and depth stencil views.
-    D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc = {};
-    rtvDescriptorHeapDesc.NumDescriptors = m_backBufferCount;
-    rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-
-    ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(m_rtvDescriptorHeap.ReleaseAndGetAddressOf())));
-
-    m_rtvDescriptorHeap->SetName(L"DeviceResources");
-
-    m_rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
-    if (m_depthBufferFormat != DXGI_FORMAT_UNKNOWN)
+#else
+    if (FAILED(hr))
     {
-        D3D12_DESCRIPTOR_HEAP_DESC dsvDescriptorHeapDesc = {};
-        dsvDescriptorHeapDesc.NumDescriptors = 1;
-        dsvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+        // If the initialization fails, fall back to the WARP device.
+        // For more information on WARP, see:
+        // http://go.microsoft.com/fwlink/?LinkId=286690
+        hr = D3D11CreateDevice(
+            nullptr,
+            D3D_DRIVER_TYPE_WARP, // Create a WARP device instead of a hardware device.
+            nullptr,
+            creationFlags,
+            s_featureLevels,
+            featLevelCount,
+            D3D11_SDK_VERSION,
+            device.GetAddressOf(),
+            &m_d3dFeatureLevel,
+            context.GetAddressOf()
+            );
 
-        ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&dsvDescriptorHeapDesc, IID_PPV_ARGS(m_dsvDescriptorHeap.ReleaseAndGetAddressOf())));
-
-        m_dsvDescriptorHeap->SetName(L"DeviceResources");
+        if (SUCCEEDED(hr))
+        {
+            OutputDebugStringA("Direct3D Adapter - WARP\n");
+        }
     }
+#endif
 
-    // Create a command allocator for each back buffer that will be rendered to.
-    for (UINT n = 0; n < m_backBufferCount; n++)
+    ThrowIfFailed(hr);
+
+#ifndef NDEBUG
+    ComPtr<ID3D11Debug> d3dDebug;
+    if (SUCCEEDED(device.As(&d3dDebug)))
     {
-        ThrowIfFailed(m_d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(m_commandAllocators[n].ReleaseAndGetAddressOf())));
-
-        wchar_t name[25] = {};
-        swprintf_s(name, L"Render target %u", n);
-        m_commandAllocators[n]->SetName(name);
+        ComPtr<ID3D11InfoQueue> d3dInfoQueue;
+        if (SUCCEEDED(d3dDebug.As(&d3dInfoQueue)))
+        {
+#ifdef _DEBUG
+            d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, true);
+            d3dInfoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, true);
+#endif
+            D3D11_MESSAGE_ID hide[] =
+            {
+                D3D11_MESSAGE_ID_SETPRIVATEDATA_CHANGINGPARAMS,
+            };
+            D3D11_INFO_QUEUE_FILTER filter = {};
+            filter.DenyList.NumIDs = static_cast<UINT>(std::size(hide));
+            filter.DenyList.pIDList = hide;
+            d3dInfoQueue->AddStorageFilterEntries(&filter);
+        }
     }
+#endif
 
-    // Create a command list for recording graphics commands.
-    ThrowIfFailed(m_d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocators[0].Get(), nullptr, IID_PPV_ARGS(m_commandList.ReleaseAndGetAddressOf())));
-    ThrowIfFailed(m_commandList->Close());
-
-    m_commandList->SetName(L"DeviceResources");
-
-    // Create a fence for tracking GPU execution progress.
-    ThrowIfFailed(m_d3dDevice->CreateFence(m_fenceValues[m_backBufferIndex], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_fence.ReleaseAndGetAddressOf())));
-    m_fenceValues[m_backBufferIndex]++;
-
-    m_fence->SetName(L"DeviceResources");
-
-    m_fenceEvent.Attach(CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE));
-    if (!m_fenceEvent.IsValid())
-    {
-        throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "CreateEventEx");
-    }
+    ThrowIfFailed(device.As(&m_d3dDevice));
+    ThrowIfFailed(context.As(&m_d3dContext));
 }
 
 // These resources need to be recreated every time the window size is changed.
@@ -303,22 +293,20 @@ void DeviceResources::CreateWindowSizeDependentResources()
         throw std::logic_error("Call SetWindow with a valid CoreWindow pointer");
     }
 
-    // Wait until all previous GPU work is complete.
-    WaitForGpu();
-
-    // Release resources that are tied to the swap chain and update fence values.
-    for (UINT n = 0; n < m_backBufferCount; n++)
-    {
-        m_renderTargets[n].Reset();
-        m_fenceValues[n] = m_fenceValues[m_backBufferIndex];
-    }
+    // Clear the previous window size specific context.
+    ID3D11RenderTargetView* nullViews[] = {nullptr};
+    m_d3dContext->OMSetRenderTargets(static_cast<UINT>(std::size(nullViews)), nullViews, nullptr);
+    m_d3dRenderTargetView.Reset();
+    m_d3dDepthStencilView.Reset();
+    m_renderTarget.Reset();
+    m_depthStencil.Reset();
+    m_d3dContext->Flush();
 
     // Determine the render target size in pixels.
     const UINT backBufferWidth = std::max<UINT>(static_cast<UINT>(m_outputSize.right - m_outputSize.left), 1u);
     const UINT backBufferHeight = std::max<UINT>(static_cast<UINT>(m_outputSize.bottom - m_outputSize.top), 1u);
     const DXGI_FORMAT backBufferFormat = NoSRGB(m_backBufferFormat);
 
-    // If the swap chain already exists, resize it, otherwise create one.
     if (m_swapChain)
     {
         // If the swap chain already exists, resize it.
@@ -369,7 +357,7 @@ void DeviceResources::CreateWindowSizeDependentResources()
         // Create a swap chain for the window.
         ComPtr<IDXGISwapChain1> swapChain;
         ThrowIfFailed(m_dxgiFactory->CreateSwapChainForCoreWindow(
-            m_commandQueue.Get(),
+            m_d3dDevice.Get(),
             m_window,
             &swapChainDesc,
             nullptr,
@@ -377,6 +365,12 @@ void DeviceResources::CreateWindowSizeDependentResources()
             ));
 
         ThrowIfFailed(swapChain.As(&m_swapChain));
+
+        // Ensure that DXGI does not queue more than one frame at a time. This both reduces latency and
+        // ensures that the application will only render after each VSync, minimizing power consumption.
+        ComPtr<IDXGIDevice3> dxgiDevice;
+        ThrowIfFailed(m_d3dDevice.As(&dxgiDevice));
+        ThrowIfFailed(dxgiDevice->SetMaximumFrameLatency(1));
     }
 
     // Handle color space settings for HDR
@@ -406,77 +400,49 @@ void DeviceResources::CreateWindowSizeDependentResources()
 
     ThrowIfFailed(m_swapChain->SetRotation(m_rotation));
 
-    // Obtain the back buffers for this window which will be the final render targets
-    // and create render target views for each of them.
-    for (UINT n = 0; n < m_backBufferCount; n++)
-    {
-        ThrowIfFailed(m_swapChain->GetBuffer(n, IID_PPV_ARGS(m_renderTargets[n].GetAddressOf())));
+    // Create a render target view of the swap chain back buffer.
+    ThrowIfFailed(m_swapChain->GetBuffer(0, IID_PPV_ARGS(m_renderTarget.ReleaseAndGetAddressOf())));
 
-        wchar_t name[25] = {};
-        swprintf_s(name, L"Render target %u", n);
-        m_renderTargets[n]->SetName(name);
-
-        D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-        rtvDesc.Format = m_backBufferFormat;
-        rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-
-        CD3DX12_CPU_DESCRIPTOR_HANDLE rtvDescriptor(
-            m_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-            static_cast<INT>(n), m_rtvDescriptorSize);
-        m_d3dDevice->CreateRenderTargetView(m_renderTargets[n].Get(), &rtvDesc, rtvDescriptor);
-    }
-
-    // Reset the index to the current back buffer.
-    m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
+    CD3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc(D3D11_RTV_DIMENSION_TEXTURE2D, m_backBufferFormat);
+    ThrowIfFailed(m_d3dDevice->CreateRenderTargetView(
+        m_renderTarget.Get(),
+        &renderTargetViewDesc,
+        m_d3dRenderTargetView.ReleaseAndGetAddressOf()
+        ));
 
     if (m_depthBufferFormat != DXGI_FORMAT_UNKNOWN)
     {
-        // Allocate a 2-D surface as the depth/stencil buffer and create a depth/stencil view
-        // on this surface.
-        CD3DX12_HEAP_PROPERTIES depthHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
-
-        D3D12_RESOURCE_DESC depthStencilDesc = CD3DX12_RESOURCE_DESC::Tex2D(
+        // Create a depth stencil view for use with 3D rendering if needed.
+        CD3D11_TEXTURE2D_DESC depthStencilDesc(
             m_depthBufferFormat,
             backBufferWidth,
             backBufferHeight,
             1, // This depth stencil view has only one texture.
-            1  // Use a single mipmap level.
+            1, // Use a single mipmap level.
+            D3D11_BIND_DEPTH_STENCIL
             );
-        depthStencilDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 
-        D3D12_CLEAR_VALUE depthOptimizedClearValue = {};
-        depthOptimizedClearValue.Format = m_depthBufferFormat;
-        depthOptimizedClearValue.DepthStencil.Depth = 1.0f;
-        depthOptimizedClearValue.DepthStencil.Stencil = 0;
-
-        ThrowIfFailed(m_d3dDevice->CreateCommittedResource(
-            &depthHeapProperties,
-            D3D12_HEAP_FLAG_NONE,
+        ThrowIfFailed(m_d3dDevice->CreateTexture2D(
             &depthStencilDesc,
-            D3D12_RESOURCE_STATE_DEPTH_WRITE,
-            &depthOptimizedClearValue,
-            IID_PPV_ARGS(m_depthStencil.ReleaseAndGetAddressOf())
+            nullptr,
+            m_depthStencil.ReleaseAndGetAddressOf()
             ));
 
-        m_depthStencil->SetName(L"Depth stencil");
-
-        D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
-        dsvDesc.Format = m_depthBufferFormat;
-        dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-
-        m_d3dDevice->CreateDepthStencilView(m_depthStencil.Get(), &dsvDesc, m_dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+        CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
+        ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(
+            m_depthStencil.Get(),
+            &depthStencilViewDesc,
+            m_d3dDepthStencilView.ReleaseAndGetAddressOf()
+            ));
     }
 
-    // Set the 3D rendering viewport and scissor rectangle to target the entire window.
-    m_screenViewport.TopLeftX = m_screenViewport.TopLeftY = 0.f;
-    m_screenViewport.Width = static_cast<float>(backBufferWidth);
-    m_screenViewport.Height = static_cast<float>(backBufferHeight);
-    m_screenViewport.MinDepth = D3D12_MIN_DEPTH;
-    m_screenViewport.MaxDepth = D3D12_MAX_DEPTH;
-
-    m_scissorRect.left = m_scissorRect.top = 0;
-    m_scissorRect.right = static_cast<LONG>(backBufferWidth);
-    m_scissorRect.bottom = static_cast<LONG>(backBufferHeight);
+    // Set the 3D rendering viewport to target the entire window.
+    m_screenViewport = CD3D11_VIEWPORT(
+        0.0f,
+        0.0f,
+        static_cast<float>(backBufferWidth),
+        static_cast<float>(backBufferHeight)
+        );
 }
 
 // This method is called when the CoreWindow is created (or re-created).
@@ -491,18 +457,14 @@ void DeviceResources::SetWindow(IUnknown* window, int width, int height, DXGI_MO
     m_rotation = rotation;
 }
 
-// This method is called when the window changes size.
+// This method is called when the window changes size
 bool DeviceResources::WindowSizeChanged(int width, int height, DXGI_MODE_ROTATION rotation)
 {
     RECT newRc;
     newRc.left = newRc.top = 0;
     newRc.right = width;
     newRc.bottom = height;
-    if (newRc.left == m_outputSize.left
-        && newRc.top == m_outputSize.top
-        && newRc.right == m_outputSize.right
-        && newRc.bottom == m_outputSize.bottom
-        && rotation == m_rotation)
+    if (newRc == m_outputSize && rotation == m_rotation)
     {
         // Handle color space settings for HDR
         UpdateColorSpace();
@@ -532,7 +494,7 @@ void DeviceResources::ValidateDevice()
 
     DXGI_ADAPTER_DESC currentDesc;
     {
-        ComPtr<IDXGIFactory4> currentFactory;
+        ComPtr<IDXGIFactory2> currentFactory;
         ThrowIfFailed(CreateDXGIFactory2(m_dxgiFactoryFlags, IID_PPV_ARGS(currentFactory.GetAddressOf())));
 
         ComPtr<IDXGIAdapter1> currentDefaultAdapter;
@@ -565,19 +527,12 @@ void DeviceResources::HandleDeviceLost()
         m_deviceNotify->OnDeviceLost();
     }
 
-    for (UINT n = 0; n < m_backBufferCount; n++)
-    {
-        m_commandAllocators[n].Reset();
-        m_renderTargets[n].Reset();
-    }
-
+    m_d3dDepthStencilView.Reset();
+    m_d3dRenderTargetView.Reset();
+    m_renderTarget.Reset();
     m_depthStencil.Reset();
-    m_commandQueue.Reset();
-    m_commandList.Reset();
-    m_fence.Reset();
-    m_rtvDescriptorHeap.Reset();
-    m_dsvDescriptorHeap.Reset();
     m_swapChain.Reset();
+    m_d3dContext.Reset();
     m_d3dDevice.Reset();
     m_dxgiFactory.Reset();
 
@@ -600,37 +555,21 @@ void DeviceResources::HandleDeviceLost()
     }
 }
 
-// Prepare the command list and render target for rendering.
-void DeviceResources::Prepare(D3D12_RESOURCE_STATES beforeState, D3D12_RESOURCE_STATES afterState)
+// Call this method when the app suspends. It provides a hint to the driver that the app
+// is entering an idle state and that temporary buffers can be reclaimed for use by other apps.
+void DeviceResources::Trim() noexcept
 {
-    // Reset command list and allocator.
-    ThrowIfFailed(m_commandAllocators[m_backBufferIndex]->Reset());
-    ThrowIfFailed(m_commandList->Reset(m_commandAllocators[m_backBufferIndex].Get(), nullptr));
-
-    if (beforeState != afterState)
+    ComPtr<IDXGIDevice3> dxgiDevice;
+    if (SUCCEEDED(m_d3dDevice.As(&dxgiDevice)))
     {
-        // Transition the render target into the correct state to allow for drawing into it.
-        D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex].Get(),
-            beforeState, afterState);
-        m_commandList->ResourceBarrier(1, &barrier);
+        dxgiDevice->Trim();
     }
 }
 
 // Present the contents of the swap chain to the screen.
-void DeviceResources::Present(D3D12_RESOURCE_STATES beforeState)
+void DeviceResources::Present()
 {
-    if (beforeState != D3D12_RESOURCE_STATE_PRESENT)
-    {
-        // Transition the render target to the state that allows it to be presented to the display.
-        D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex].Get(), beforeState, D3D12_RESOURCE_STATE_PRESENT);
-        m_commandList->ResourceBarrier(1, &barrier);
-    }
-
-    // Send the command list off to the GPU for processing.
-    ThrowIfFailed(m_commandList->Close());
-    m_commandQueue->ExecuteCommandLists(1, CommandListCast(m_commandList.GetAddressOf()));
-
-    HRESULT hr;
+    HRESULT hr = E_FAIL;
     if (m_options & c_AllowTearing)
     {
         // Recommended to always use tearing if supported when using a sync interval of 0.
@@ -644,7 +583,19 @@ void DeviceResources::Present(D3D12_RESOURCE_STATES beforeState)
         hr = m_swapChain->Present(1, 0);
     }
 
-    // If the device was reset we must completely reinitialize the renderer.
+    // Discard the contents of the render target.
+    // This is a valid operation only when the existing contents will be entirely
+    // overwritten. If dirty or scroll rects are used, this call should be removed.
+    m_d3dContext->DiscardView(m_d3dRenderTargetView.Get());
+
+    if (m_d3dDepthStencilView)
+    {
+        // Discard the contents of the depth stencil.
+        m_d3dContext->DiscardView(m_d3dDepthStencilView.Get());
+    }
+
+    // If the device was removed either by a disconnection or a driver upgrade, we
+    // must recreate all device resources.
     if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
     {
 #ifdef _DEBUG
@@ -659,8 +610,6 @@ void DeviceResources::Present(D3D12_RESOURCE_STATES beforeState)
     {
         ThrowIfFailed(hr);
 
-        MoveToNextFrame();
-
         if (!m_dxgiFactory->IsCurrent())
         {
             // Output information is cached on the DXGI Factory. If it is stale we need to create a new factory.
@@ -669,51 +618,9 @@ void DeviceResources::Present(D3D12_RESOURCE_STATES beforeState)
     }
 }
 
-// Wait for pending GPU work to complete.
-void DeviceResources::WaitForGpu() noexcept
-{
-    if (m_commandQueue && m_fence && m_fenceEvent.IsValid())
-    {
-        // Schedule a Signal command in the GPU queue.
-        UINT64 fenceValue = m_fenceValues[m_backBufferIndex];
-        if (SUCCEEDED(m_commandQueue->Signal(m_fence.Get(), fenceValue)))
-        {
-            // Wait until the Signal has been processed.
-            if (SUCCEEDED(m_fence->SetEventOnCompletion(fenceValue, m_fenceEvent.Get())))
-            {
-                WaitForSingleObjectEx(m_fenceEvent.Get(), INFINITE, FALSE);
-
-                // Increment the fence value for the current frame.
-                m_fenceValues[m_backBufferIndex]++;
-            }
-        }
-    }
-}
-
-// Prepare to render the next frame.
-void DeviceResources::MoveToNextFrame()
-{
-    // Schedule a Signal command in the queue.
-    const UINT64 currentFenceValue = m_fenceValues[m_backBufferIndex];
-    ThrowIfFailed(m_commandQueue->Signal(m_fence.Get(), currentFenceValue));
-
-    // Update the back buffer index.
-    m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
-
-    // If the next frame is not ready to be rendered yet, wait until it is ready.
-    if (m_fence->GetCompletedValue() < m_fenceValues[m_backBufferIndex])
-    {
-        ThrowIfFailed(m_fence->SetEventOnCompletion(m_fenceValues[m_backBufferIndex], m_fenceEvent.Get()));
-        WaitForSingleObjectEx(m_fenceEvent.Get(), INFINITE, FALSE);
-    }
-
-    // Set the fence value for the next frame.
-    m_fenceValues[m_backBufferIndex] = currentFenceValue + 1;
-}
-
-// This method acquires the first available hardware adapter that supports Direct3D 12.
-// If no such adapter can be found, try WARP. Otherwise throw an exception.
-void DeviceResources::GetAdapter(IDXGIAdapter1** ppAdapter)
+// This method acquires the first available hardware adapter.
+// If no such adapter can be found, *ppAdapter will be set to nullptr.
+void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
 {
     *ppAdapter = nullptr;
 
@@ -739,16 +646,13 @@ void DeviceResources::GetAdapter(IDXGIAdapter1** ppAdapter)
                 continue;
             }
 
-            // Check to see if the adapter supports Direct3D 12, but don't create the actual device yet.
-            if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), m_d3dMinFeatureLevel, _uuidof(ID3D12Device), nullptr)))
-            {
-#ifdef _DEBUG
-                wchar_t buff[256] = {};
-                swprintf_s(buff, L"Direct3D Adapter (%u): VID:%04X, PID:%04X - %ls\n", adapterIndex, desc.VendorId, desc.DeviceId, desc.Description);
-                OutputDebugStringW(buff);
-#endif
-                break;
-            }
+        #ifdef _DEBUG
+            wchar_t buff[256] = {};
+            swprintf_s(buff, L"Direct3D Adapter (%u): VID:%04X, PID:%04X - %ls\n", adapterIndex, desc.VendorId, desc.DeviceId, desc.Description);
+            OutputDebugStringW(buff);
+        #endif
+
+            break;
         }
     }
 
@@ -758,7 +662,7 @@ void DeviceResources::GetAdapter(IDXGIAdapter1** ppAdapter)
             SUCCEEDED(m_dxgiFactory->EnumAdapters1(
                 adapterIndex,
                 adapter.ReleaseAndGetAddressOf()));
-            ++adapterIndex)
+            adapterIndex++)
         {
             DXGI_ADAPTER_DESC1 desc;
             ThrowIfFailed(adapter->GetDesc1(&desc));
@@ -769,35 +673,14 @@ void DeviceResources::GetAdapter(IDXGIAdapter1** ppAdapter)
                 continue;
             }
 
-            // Check to see if the adapter supports Direct3D 12, but don't create the actual device yet.
-            if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), m_d3dMinFeatureLevel, _uuidof(ID3D12Device), nullptr)))
-            {
 #ifdef _DEBUG
-                wchar_t buff[256] = {};
-                swprintf_s(buff, L"Direct3D Adapter (%u): VID:%04X, PID:%04X - %ls\n", adapterIndex, desc.VendorId, desc.DeviceId, desc.Description);
-                OutputDebugStringW(buff);
-#endif
-                break;
-            }
-        }
-    }
-
-#if !defined(NDEBUG)
-    if (!adapter)
-    {
-        // Try WARP12 instead
-        if (FAILED(m_dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(adapter.ReleaseAndGetAddressOf()))))
-        {
-            throw std::runtime_error("WARP12 not available. Enable the 'Graphics Tools' optional feature");
-        }
-
-        OutputDebugStringA("Direct3D Adapter - WARP12\n");
-    }
+            wchar_t buff[256] = {};
+            swprintf_s(buff, L"Direct3D Adapter (%u): VID:%04X, PID:%04X - %ls\n", adapterIndex, desc.VendorId, desc.DeviceId, desc.Description);
+            OutputDebugStringW(buff);
 #endif
 
-    if (!adapter)
-    {
-        throw std::runtime_error("No Direct3D 12 device found");
+            break;
+        }
     }
 
     *ppAdapter = adapter.Detach();

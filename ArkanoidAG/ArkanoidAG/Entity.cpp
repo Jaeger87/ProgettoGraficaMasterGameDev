@@ -2,7 +2,6 @@
 #include "Entity.h"
 
 
-Texture* Entity::m_texture;
 Vec2* Entity::m_origin;
 
 Entity::Entity(Vec2* _position):position(_position)
@@ -11,11 +10,11 @@ Entity::Entity(Vec2* _position):position(_position)
 }
 
 
-void Entity::setupTexture(Texture* i_texture, ComPtr<ID3D12Resource> &i_resource)
+void Entity::setupTexture(Texture* i_texture, ComPtr<ID3D11ShaderResourceView> &i_resource)
 {
 	Entity::m_texture = i_texture;
 
-	ComPtr<ID3D12Resource> sprite;
+	ComPtr<ID3D11ShaderResourceView> sprite;
 	DX::ThrowIfFailed(i_resource.As(&sprite));
 	/*
 	CD3D12_TEXTURE2D_DESC spriteDesc;
@@ -25,4 +24,9 @@ void Entity::setupTexture(Texture* i_texture, ComPtr<ID3D12Resource> &i_resource
 	m_origin->y = float(spriteDesc.Height / 2);
 	*/
 
+}
+
+void Entity::Reset()
+{
+	m_texture->Reset();
 }

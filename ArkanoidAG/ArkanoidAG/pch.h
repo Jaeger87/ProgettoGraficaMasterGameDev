@@ -10,33 +10,28 @@
 
 #include <wrl.h>
 
-#include <d3d12.h>
+#include <d3d11_3.h>
 #include <dxgi1_6.h>
 
 #include <DirectXMath.h>
 #include <DirectXColors.h>
 
-#include "d3dx12.h"
-
 #include <algorithm>
 #include <cmath>
-#include <cstddef>
 #include <cstdint>
 #include <cstdio>
-#include <cstring>
 #include <cwchar>
 #include <exception>
 #include <iterator>
 #include <memory>
 #include <stdexcept>
-#include <system_error>
+
+#include <pix.h>
 
 #include "BufferHelpers.h"
 #include "CommonStates.h"
 #include "DDSTextureLoader.h"
-#include "DescriptorHeap.h"
 #include "DirectXHelpers.h"
-#include "EffectPipelineStateDescription.h"
 #include "Effects.h"
 #include "GamePad.h"
 #include "GeometricPrimitive.h"
@@ -46,18 +41,12 @@
 #include "Mouse.h"
 #include "PostProcess.h"
 #include "PrimitiveBatch.h"
-#include "RenderTargetState.h"
-#include "ResourceUploadBatch.h"
 #include "ScreenGrab.h"
 #include "SimpleMath.h"
 #include "SpriteBatch.h"
 #include "SpriteFont.h"
 #include "VertexTypes.h"
 #include "WICTextureLoader.h"
-
-// To use graphics and CPU markup events with the latest version of PIX, change this to include <pix3.h>
-// then add the NuGet package WinPixEventRuntime to the project.
-#include <pix.h>
 
 #ifdef _DEBUG
 #include <dxgidebug.h>

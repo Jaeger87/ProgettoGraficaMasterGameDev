@@ -7,11 +7,11 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="258d2724-ce6c-4514-ae42-93a22f0e72b6"
+    Name="9f551b19-7fe8-4ac5-aa74-6e37440a3f75"
     Publisher="CN=39333"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="258d2724-ce6c-4514-ae42-93a22f0e72b6" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="9f551b19-7fe8-4ac5-aa74-6e37440a3f75" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>ArkanoidAG</DisplayName>
