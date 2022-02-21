@@ -6,6 +6,7 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
+#include "Sphere.h"
 
 
 // A basic game implementation that creates a D3D11 device and
@@ -44,6 +45,8 @@ public:
     // Properties
     void GetDefaultSize( int& width, int& height ) const noexcept;
 
+    
+
 private:
 
     void Update(DX::StepTimer const& timer);
@@ -54,9 +57,18 @@ private:
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
 
+    void StartGame();
+
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
 
     // Rendering loop timer.
     DX::StepTimer                           m_timer;
+
+    Sphere* sphere;
+
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_texture;
+    std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
+    DirectX::SimpleMath::Vector2 m_screenPos;
+    DirectX::SimpleMath::Vector2 m_origin;
 };

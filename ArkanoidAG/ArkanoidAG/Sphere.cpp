@@ -70,10 +70,13 @@ void Sphere::update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftW
     }
 }
 
+/*
 void Sphere::display(DirectX::SpriteBatch *i_spriteBatch)
 {
-    /*
+    
     i_spriteBatch->Draw(m_texture->Get(), position, nullptr,
         sphereColor, 0.f, m_origin, 0.75f);
-    */
+    
 }
+*/
+

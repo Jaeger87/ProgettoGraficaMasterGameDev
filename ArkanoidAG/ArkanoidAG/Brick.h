@@ -12,8 +12,6 @@
 #include "SpriteBatch.h"
 #include "WICTextureLoader.h"
 
-using Color = DirectX::XMVECTORF32;
-
 class Brick : public Rect
 {
 private:

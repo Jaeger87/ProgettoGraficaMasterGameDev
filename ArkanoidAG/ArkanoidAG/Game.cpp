@@ -20,6 +20,7 @@ Game::Game() noexcept(false)
 // Initialize the Direct3D resources required to run.
 void Game::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation)
 {
+    StartGame();
     m_deviceResources->SetWindow(window, width, height, rotation);
 
     m_deviceResources->CreateDeviceResources();
@@ -34,6 +35,16 @@ void Game::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATIO
     m_timer.SetFixedTimeStep(true);
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
     */
+
+    
+}
+
+void Game::StartGame()
+{
+    auto size = m_deviceResources->GetOutputSize();
+    m_screenPos.x = float(size.right) / 2.f;
+    m_screenPos.y = float(size.bottom) / 2.f;
+    sphere = new Sphere(new Vec2(m_screenPos.x, m_screenPos.y));
 }
 
 #pragma region Frame Update
@@ -78,6 +89,16 @@ void Game::Render()
     PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Render");
 
     // TODO: Add your rendering code here.
+    m_spriteBatch->Begin();
+
+    sphere->display(m_spriteBatch);
+    /*
+   
+    m_spriteBatch->Draw(m_texture.Get(), m_screenPos, nullptr,
+        Colors::White, 0.f, m_origin);
+    */
+    m_spriteBatch->End();
+
 
     PIXEndEvent(context);
 
@@ -169,18 +190,46 @@ void Game::CreateDeviceDependentResources()
     auto device = m_deviceResources->GetD3DDevice();
 
     // TODO: Initialize device dependent objects here (independent of window size).
-    device;
+
+    m_texture = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
+
+    auto context = m_deviceResources->GetD3DDeviceContext();
+    m_spriteBatch = std::make_unique<SpriteBatch>(context);
+
+    ComPtr<ID3D11Resource> resource;
+    DX::ThrowIfFailed(
+        CreateWICTextureFromFile(device, L"Assets/cat.png",
+            resource.GetAddressOf(),
+            m_texture->ReleaseAndGetAddressOf()));
+
+    ComPtr<ID3D11Texture2D> cat;
+    DX::ThrowIfFailed(resource.As(&cat));
+
+    CD3D11_TEXTURE2D_DESC catDesc;
+    cat->GetDesc(&catDesc);
+
+    m_origin.x = float(catDesc.Width / 2);
+    m_origin.y = float(catDesc.Height / 2);
+
+    sphere->setupTexture(m_texture,&m_origin);
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
 void Game::CreateWindowSizeDependentResources()
 {
     // TODO: Initialize windows-size dependent objects here.
+
+    auto size = m_deviceResources->GetOutputSize();
+    m_screenPos.x = float(size.right) / 2.f;
+    m_screenPos.y = float(size.bottom) / 2.f;
 }
+
+
 
 void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
+    m_spriteBatch.reset();
 }
 
 void Game::OnDeviceRestored()

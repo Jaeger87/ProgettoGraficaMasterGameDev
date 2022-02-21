@@ -1,29 +1,23 @@
 #include "pch.h"
 #include "Entity.h"
-
-
-Vec2* Entity::m_origin;
+#include <DirectXColors.h>
 
 Entity::Entity(Vec2* _position):position(_position)
 {
 
 }
 
-
-void Entity::setupTexture(Texture* i_texture, ComPtr<ID3D11ShaderResourceView> &i_resource)
+void Entity::display(std::unique_ptr<DirectX::SpriteBatch> & i_spriteBatch)
 {
-	Entity::m_texture = i_texture;
+	i_spriteBatch->Draw(m_texture->Get(), *position, nullptr,
+		DirectX::Colors::White, 0.f, *m_origin);
+}
 
-	ComPtr<ID3D11ShaderResourceView> sprite;
-	DX::ThrowIfFailed(i_resource.As(&sprite));
-	/*
-	CD3D12_TEXTURE2D_DESC spriteDesc;
-	sprite->GetDesc(&spriteDesc);
-	
-	m_origin->x = float(spriteDesc.Width / 2);
-	m_origin->y = float(spriteDesc.Height / 2);
-	*/
 
+void Entity::setupTexture(Texture* i_texture, Vec2* i_origin)
+{
+	m_texture = i_texture;
+	m_origin = i_origin;
 }
 
 void Entity::Reset()

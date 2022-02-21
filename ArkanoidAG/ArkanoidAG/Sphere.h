@@ -4,7 +4,7 @@
 #include "Brick.h"
 #include "Wall.h"
 
-class Sphere : Entity 
+class Sphere : public Entity
 {
 private:
 	static Color sphereColor;
@@ -21,6 +21,6 @@ private:
 public:
 	Sphere(Vec2* _position);
 	void update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall);
-	void display(DirectX::SpriteBatch* i_spriteBatch) override;
+	//void display(DirectX::SpriteBatch* i_spriteBatch) override;
 	
 };
