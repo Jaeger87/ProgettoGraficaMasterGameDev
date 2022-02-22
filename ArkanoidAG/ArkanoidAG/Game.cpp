@@ -41,10 +41,7 @@ void Game::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATIO
 
 void Game::StartGame()
 {
-    auto size = m_deviceResources->GetOutputSize();
-    m_screenPos.x = float(size.right) / 2.f;
-    m_screenPos.y = float(size.bottom) / 2.f;
-    sphere = new Sphere(new Vec2(m_screenPos.x, m_screenPos.y));
+    sphere = new Sphere(new Vec2(200, 300));
 }
 
 #pragma region Frame Update
