@@ -12,5 +12,6 @@ public:
 
 	Paddle(Vec2* position, float length);
 	void display(DirectX::SpriteBatch* i_spriteBatch) override;
+	void setupTexture(Texture* i_texture, Vec2* i_origin) override;
 	void getInput(float newX);
 };

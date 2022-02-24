@@ -11,4 +11,5 @@ private:
 public:
 	Wall(Vec2* _position, float _width, float _height);
 	void display(DirectX::SpriteBatch* i_spriteBatch) override;
+	void setupTexture(Texture* i_texture, Vec2* i_origin) override;
 };
