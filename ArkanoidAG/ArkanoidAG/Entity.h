@@ -14,7 +14,7 @@ protected:
 
 public:
 	Entity(Vec2* _position);
-	virtual void display(std::unique_ptr<DirectX::SpriteBatch> & i_spriteBatch);
-	void setupTexture(Texture* i_texture, Vec2* i_origin);
+	virtual void display(std::unique_ptr<DirectX::SpriteBatch> & i_spriteBatch) = 0;
+	virtual void setupTexture(Texture* i_texture, Vec2* i_origin) = 0;
 	void Reset();
 };

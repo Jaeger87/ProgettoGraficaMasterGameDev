@@ -5,6 +5,8 @@ class Paddle : public Rect
 {
 
 private:
+	static Texture* m_texture;
+	static Vec2* m_origin;
 	const float height = 10;
 public:
 

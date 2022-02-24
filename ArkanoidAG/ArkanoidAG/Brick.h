@@ -17,6 +17,9 @@ class Brick : public Rect
 private:
 	static Color ColorFullLife;
 	static Color ColorHalfLife;
+	static Texture* m_texture_FullLife;
+	static Texture* m_texture_HalfLife;
+	static Vec2* m_origin;
 public:
 	enum LIFEBRICK { FULL, HALF, DEAD };
 	LIFEBRICK life;

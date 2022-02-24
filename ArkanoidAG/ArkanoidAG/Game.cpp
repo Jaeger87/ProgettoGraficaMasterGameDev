@@ -195,7 +195,7 @@ void Game::CreateDeviceDependentResources()
 
     ComPtr<ID3D11Resource> resource;
     DX::ThrowIfFailed(
-        CreateWICTextureFromFile(device, L"Assets/cat.png",
+        CreateWICTextureFromFile(device, L"Assets/Sphere.png",
             resource.GetAddressOf(),
             m_texture->ReleaseAndGetAddressOf()));
 

@@ -7,6 +7,8 @@
 class Sphere : public Entity
 {
 private:
+	static Texture* m_texture;
+	static Vec2* m_origin;
 	static Color sphereColor;
 	Vec2 velocity;
 	const float radius = 12;
@@ -21,6 +23,7 @@ private:
 public:
 	Sphere(Vec2* _position);
 	void update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall);
-	//void display(DirectX::SpriteBatch* i_spriteBatch) override;
+	void display(std::unique_ptr<DirectX::SpriteBatch>& i_spriteBatch) override;
+	void setupTexture(Texture* i_texture, Vec2* i_origin) override;
 	
 };

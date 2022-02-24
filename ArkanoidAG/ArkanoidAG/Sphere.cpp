@@ -5,6 +5,9 @@
 Color Sphere::sphereColor = { { { 0.1f, 1.000000000f, 0.1f, 1.000000000f } } };
 
 
+Texture* Sphere::m_texture;
+Vec2* Sphere::m_origin;
+
 Sphere::Sphere(Vec2* _position) : Entity(_position)
 {
     velocity = Vec2(0, 0);
@@ -68,6 +71,18 @@ void Sphere::update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftW
         }
 
     }
+}
+
+void Sphere::setupTexture(Texture* i_texture, Vec2* i_origin)
+{
+    m_texture = i_texture;
+    m_origin = i_origin;
+}
+
+void Sphere::display(std::unique_ptr<DirectX::SpriteBatch>& i_spriteBatch)
+{
+    i_spriteBatch->Draw(m_texture->Get(), *position, nullptr,
+        DirectX::Colors::White, 0.f, *m_origin, 0.5);
 }
 
 /*
