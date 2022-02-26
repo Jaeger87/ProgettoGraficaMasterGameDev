@@ -94,6 +94,9 @@
     <Image Include="Assets\Sphere.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\Paddle.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />

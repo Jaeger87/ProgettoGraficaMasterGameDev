@@ -15,6 +15,7 @@ void Wall::setupTexture(Texture* i_texture, Vec2* i_origin)
     m_origin = i_origin;
 }
 
-void Wall::display(DirectX::SpriteBatch* i_spriteBatch)
+void Wall::display(std::unique_ptr<DirectX::SpriteBatch>& i_spriteBatch)
 {
+
 }

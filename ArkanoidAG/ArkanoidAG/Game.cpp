@@ -42,6 +42,7 @@ void Game::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATIO
 void Game::StartGame()
 {
     sphere = new Sphere(new Vec2(200, 300));
+    paddle = new Paddle(new Vec2(100, 400),32,16);
 }
 
 #pragma region Frame Update
@@ -89,11 +90,8 @@ void Game::Render()
     m_spriteBatch->Begin();
 
     sphere->display(m_spriteBatch);
-    /*
-   
-    m_spriteBatch->Draw(m_texture.Get(), m_screenPos, nullptr,
-        Colors::White, 0.f, m_origin);
-    */
+    paddle->display(m_spriteBatch);
+
     m_spriteBatch->End();
 
 
@@ -188,27 +186,49 @@ void Game::CreateDeviceDependentResources()
 
     // TODO: Initialize device dependent objects here (independent of window size).
 
-    m_texture = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_textureSphere = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_texturePaddle = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_textureBrick01 = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_textureBrick02 = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
 
     auto context = m_deviceResources->GetD3DDeviceContext();
     m_spriteBatch = std::make_unique<SpriteBatch>(context);
 
-    ComPtr<ID3D11Resource> resource;
+    ComPtr<ID3D11Resource> resourceSphere;
     DX::ThrowIfFailed(
         CreateWICTextureFromFile(device, L"Assets/Sphere.png",
-            resource.GetAddressOf(),
-            m_texture->ReleaseAndGetAddressOf()));
+            resourceSphere.GetAddressOf(),
+            m_textureSphere->ReleaseAndGetAddressOf()));
 
-    ComPtr<ID3D11Texture2D> cat;
-    DX::ThrowIfFailed(resource.As(&cat));
+    ComPtr<ID3D11Texture2D> sphereTex;
+    DX::ThrowIfFailed(resourceSphere.As(&sphereTex));
 
-    CD3D11_TEXTURE2D_DESC catDesc;
-    cat->GetDesc(&catDesc);
+    CD3D11_TEXTURE2D_DESC sphereDesc;
+    sphereTex->GetDesc(&sphereDesc);
 
-    m_origin.x = float(catDesc.Width / 2);
-    m_origin.y = float(catDesc.Height / 2);
+    m_origin.x = float(sphereDesc.Width / 2);
+    m_origin.y = float(sphereDesc.Height / 2);
 
-    sphere->setupTexture(m_texture,&m_origin);
+    sphere->setupTexture(m_textureSphere,&m_origin);
+
+
+    ComPtr<ID3D11Resource> resourcePaddle;
+    DX::ThrowIfFailed(
+        CreateWICTextureFromFile(device, L"Assets/Paddle.png",
+            resourcePaddle.GetAddressOf(),
+            m_texturePaddle->ReleaseAndGetAddressOf()));
+
+    ComPtr<ID3D11Texture2D> paddleTex;
+    DX::ThrowIfFailed(resourcePaddle.As(&paddleTex));
+
+    CD3D11_TEXTURE2D_DESC paddleDesc;
+    sphereTex->GetDesc(&paddleDesc);
+
+    m_origin.x = float(paddleDesc.Width);
+    m_origin.y = float(paddleDesc.Height);
+
+    paddle->setupTexture(m_texturePaddle, &m_origin);
+
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.

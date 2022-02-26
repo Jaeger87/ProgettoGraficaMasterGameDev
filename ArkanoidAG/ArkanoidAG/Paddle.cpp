@@ -4,8 +4,9 @@
 Texture* Paddle::m_texture;
 Vec2* Paddle::m_origin;
 
-Paddle::Paddle(Vec2* position, float length) : Rect(position, length, height)
+Paddle::Paddle(Vec2* position, float length, float height) : Rect(position, length, height)
 {
+
 }
 
 void Paddle::setupTexture(Texture* i_texture, Vec2* i_origin)
@@ -14,10 +15,13 @@ void Paddle::setupTexture(Texture* i_texture, Vec2* i_origin)
     m_origin = i_origin;
 }
 
-void Paddle::display(DirectX::SpriteBatch* i_spriteBatch)
+void Paddle::display(std::unique_ptr<DirectX::SpriteBatch>& i_spriteBatch)
 {
+    i_spriteBatch->Draw(m_texture->Get(), *position, nullptr,
+        DirectX::Colors::White, 0.f, *m_origin);
 }
 
 void Paddle::getInput(float newX)
 {
+
 }
