@@ -8,7 +8,6 @@ class Entity
 {
 
 protected:
-	Texture* m_texture;
 	Vec2* position;
 	Vec2* m_origin;
 
@@ -16,5 +15,5 @@ public:
 	Entity(Vec2* _position);
 	virtual void display(std::unique_ptr<DirectX::SpriteBatch> & i_spriteBatch) = 0;
 	virtual void setupTexture(Texture* i_texture, Vec2* i_origin) = 0;
-	void Reset();
+	virtual void Reset() = 0;
 };

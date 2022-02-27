@@ -95,3 +95,7 @@ void Sphere::display(DirectX::SpriteBatch *i_spriteBatch)
 }
 */
 
+void Sphere::Reset()
+{
+    m_texture->Reset();
+}

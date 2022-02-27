@@ -27,6 +27,7 @@ public:
 	const float BHEIGHT = 10;
 	void display(std::unique_ptr<DirectX::SpriteBatch>& i_spriteBatch) override;
 	void setupTexture(Texture* i_texture, Vec2* i_origin) override;
+	void Reset() override;
 	bool isAlive();
 	void hit();
 

@@ -193,6 +193,7 @@ void Game::CreateDeviceDependentResources()
 
     auto context = m_deviceResources->GetD3DDeviceContext();
     m_spriteBatch = std::make_unique<SpriteBatch>(context);
+    m_batch = std::make_unique<PrimitiveBatch<DirectX::VertexPositionColor>>(context);
 
     ComPtr<ID3D11Resource> resourceSphere;
     DX::ThrowIfFailed(

@@ -22,8 +22,3 @@ void Entity::setupTexture(Texture* i_texture, Vec2* i_origin)
 	m_origin = i_origin;
 }
 */
-
-void Entity::Reset()
-{
-	m_texture->Reset();
-}

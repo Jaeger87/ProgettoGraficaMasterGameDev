@@ -25,3 +25,8 @@ void Paddle::getInput(float newX)
 {
 
 }
+
+void Paddle::Reset()
+{
+    m_texture->Reset();
+}
