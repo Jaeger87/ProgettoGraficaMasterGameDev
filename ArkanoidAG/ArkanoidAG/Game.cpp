@@ -43,6 +43,7 @@ void Game::StartGame()
 {
     sphere = new Sphere(new Vec2(200, 300));
     paddle = new Paddle(new Vec2(100, 400),32,16);
+    leftWall = new Wall(new Vec2(100, 50), 20, 400);
 }
 
 #pragma region Frame Update
@@ -86,13 +87,46 @@ void Game::Render()
     auto context = m_deviceResources->GetD3DDeviceContext();
     PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Render");
 
-    // TODO: Add your rendering code here.
-    m_spriteBatch->Begin();
 
-    sphere->display(m_spriteBatch);
-    paddle->display(m_spriteBatch);
+    // TODO: Add your rendering code here.
+
+    context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
+    context->OMSetDepthStencilState(m_states->DepthNone(), 0);
+    context->RSSetState(m_states->CullNone());
+
+    m_effect->Apply(context);
+
+    context->IASetInputLayout(m_inputLayout.Get());
+
+    m_batch->Begin();
+
+    leftWall->display(m_spriteBatch, m_batch);
+
+    m_batch->End();
+
+    m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
+    
+
+    sphere->display(m_spriteBatch, m_batch);
+    paddle->display(m_spriteBatch, m_batch);
+    
 
     m_spriteBatch->End();
+
+
+
+
+    /*
+    m_batch->Begin();
+
+    VertexPositionColor v1(Vector3(0.f, 0.5f, 0.5f), Colors::Yellow);
+    VertexPositionColor v2(Vector3(0.5f, -0.5f, 0.5f), Colors::Yellow);
+    VertexPositionColor v3(Vector3(-0.5f, -0.5f, 0.5f), Colors::Yellow);
+
+    m_batch->DrawTriangle(v1, v2, v3);
+
+    m_batch->End();
+    */
 
 
     PIXEndEvent(context);
@@ -193,7 +227,24 @@ void Game::CreateDeviceDependentResources()
 
     auto context = m_deviceResources->GetD3DDeviceContext();
     m_spriteBatch = std::make_unique<SpriteBatch>(context);
+    
+    m_states = std::make_unique<CommonStates>(device);
+    m_effect = std::make_unique<BasicEffect>(device);
+
+    m_effect->SetVertexColorEnabled(true);
     m_batch = std::make_unique<PrimitiveBatch<DirectX::VertexPositionColor>>(context);
+
+    DX::ThrowIfFailed(
+        CreateInputLayoutFromEffect<VertexType>(device, m_effect.get(),
+            m_inputLayout.ReleaseAndGetAddressOf())
+    );
+
+    auto size = m_deviceResources->GetOutputSize();
+
+    Matrix proj = Matrix::CreateScale(2.f / float(size.right),
+        -2.f / float(size.bottom), 1.f)
+        * Matrix::CreateTranslation(-1.f, 1.f, 0.f);
+    m_effect->SetProjection(proj);
 
     ComPtr<ID3D11Resource> resourceSphere;
     DX::ThrowIfFailed(
@@ -227,8 +278,8 @@ void Game::CreateDeviceDependentResources()
     CD3D11_TEXTURE2D_DESC paddleDesc;
     sphereTex->GetDesc(&paddleDesc);
 
-    m_origin.x = float(paddleDesc.Width);
-    m_origin.y = float(paddleDesc.Height);
+    m_origin.x = float(paddleDesc.Width / 2);
+    m_origin.y = float(paddleDesc.Height / 2);
 
     Paddle::setupTexture(m_texturePaddle, &m_origin);
 
@@ -250,6 +301,10 @@ void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
     m_spriteBatch.reset();
+    m_batch.reset();
+    m_effect.reset();
+    m_states.reset();
+    m_inputLayout.Reset();
 }
 
 void Game::OnDeviceRestored()

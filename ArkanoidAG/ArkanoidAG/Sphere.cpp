@@ -79,7 +79,7 @@ void Sphere::setupTexture(Texture* i_texture, Vec2* i_origin)
     m_origin = i_origin;
 }
 
-void Sphere::display(SpriteBatchAlias& i_spriteBatch)
+void Sphere::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
 {
     i_spriteBatch->Draw(m_texture->Get(), *position, nullptr,
         DirectX::Colors::White, 0.f, *m_origin, 0.5);

@@ -15,7 +15,7 @@ void Brick::setupTexture(Texture* i_FullLifeTexture, Texture* i_HalfLifeTexture,
     m_origin = i_origin;
 }
 
-void Brick::display(SpriteBatchAlias& i_spriteBatch)
+void Brick::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
 {
     
 }

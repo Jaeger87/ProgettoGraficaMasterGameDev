@@ -7,7 +7,11 @@
 #include "DeviceResources.h"
 #include "StepTimer.h"
 #include "Sphere.h"
+#include "Paddle.h"
+#include "Wall.h"
 
+using VertexType = DirectX::VertexPositionColor;
+using Matrix = DirectX::SimpleMath::Matrix;
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -67,9 +71,13 @@ private:
 
     Sphere* sphere;
     Paddle* paddle;
+    Wall* leftWall;
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> m_batch;
+    std::unique_ptr<DirectX::CommonStates> m_states;
+    std::unique_ptr<DirectX::BasicEffect> m_effect;
+    Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
     DirectX::SimpleMath::Vector2 m_screenPos;
     DirectX::SimpleMath::Vector2 m_origin;
 };

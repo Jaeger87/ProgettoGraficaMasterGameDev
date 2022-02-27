@@ -23,7 +23,7 @@ private:
 public:
 	Sphere(Vec2* _position);
 	void update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall);
-	void display(SpriteBatchAlias& i_spriteBatch) override;
+	void display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer) override;
 	static void Reset();
 	static void setupTexture(Texture* i_texture, Vec2* i_origin);
 	

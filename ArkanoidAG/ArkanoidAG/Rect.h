@@ -8,5 +8,5 @@ protected:
 	float m_height;
 public:
 	Rect(Vec2* _position, float _width, float _height);
-	virtual void display(SpriteBatchAlias& i_spriteBatch) = 0;
+	virtual void display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer) = 0;
 };
