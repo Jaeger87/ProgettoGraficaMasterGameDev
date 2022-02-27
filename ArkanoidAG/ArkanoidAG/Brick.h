@@ -25,9 +25,9 @@ public:
 	LIFEBRICK life;
 	const float BWIDTH = 20;
 	const float BHEIGHT = 10;
-	void display(std::unique_ptr<DirectX::SpriteBatch>& i_spriteBatch) override;
-	void setupTexture(Texture* i_texture, Vec2* i_origin) override;
-	void Reset() override;
+	void display(SpriteBatchAlias& i_spriteBatch) override;
+	static void setupTexture(Texture* i_FullLifeTexture, Texture* i_HalfLifeTexture, Vec2* i_origin);
+	static void Reset();
 	bool isAlive();
 	void hit();
 

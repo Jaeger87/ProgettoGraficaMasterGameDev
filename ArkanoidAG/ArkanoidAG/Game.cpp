@@ -210,7 +210,9 @@ void Game::CreateDeviceDependentResources()
     m_origin.x = float(sphereDesc.Width / 2);
     m_origin.y = float(sphereDesc.Height / 2);
 
-    sphere->setupTexture(m_textureSphere,&m_origin);
+    
+
+    Sphere::setupTexture(m_textureSphere,&m_origin);
 
 
     ComPtr<ID3D11Resource> resourcePaddle;
@@ -228,7 +230,7 @@ void Game::CreateDeviceDependentResources()
     m_origin.x = float(paddleDesc.Width);
     m_origin.y = float(paddleDesc.Height);
 
-    paddle->setupTexture(m_texturePaddle, &m_origin);
+    Paddle::setupTexture(m_texturePaddle, &m_origin);
 
 }
 

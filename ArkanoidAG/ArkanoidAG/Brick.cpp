@@ -8,14 +8,14 @@ Texture* Brick::m_texture_FullLife;
 Texture* Brick::m_texture_HalfLife;
 Vec2* Brick::m_origin;
 
-void Brick::setupTexture(Texture* i_texture, Vec2* i_origin)
+void Brick::setupTexture(Texture* i_FullLifeTexture, Texture* i_HalfLifeTexture, Vec2* i_origin)
 {
-    m_texture_FullLife = &i_texture[0];
-    m_texture_HalfLife = &i_texture[1];
+    m_texture_FullLife = i_FullLifeTexture;
+    m_texture_HalfLife = i_HalfLifeTexture;
     m_origin = i_origin;
 }
 
-void Brick::display(std::unique_ptr<DirectX::SpriteBatch>& i_spriteBatch)
+void Brick::display(SpriteBatchAlias& i_spriteBatch)
 {
     
 }

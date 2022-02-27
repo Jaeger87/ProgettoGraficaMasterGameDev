@@ -8,7 +8,7 @@ Entity::Entity(Vec2* _position):position(_position)
 }
 
 /*
-void Entity::display(std::unique_ptr<DirectX::SpriteBatch> & i_spriteBatch)
+void Entity::display(std::unique_ptr<DirectX::SpriteBatchAlias> & i_spriteBatch)
 {
 	i_spriteBatch->Draw(m_texture->Get(), *position, nullptr,
 		DirectX::Colors::White, 0.f, *m_origin);

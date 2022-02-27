@@ -11,8 +11,8 @@ private:
 
 public:
 	Paddle(Vec2* position, float length, float height);
-	void display(std::unique_ptr<DirectX::SpriteBatch>& i_spriteBatch) override;
-	void setupTexture(Texture* i_texture, Vec2* i_origin) override;
-	void Reset() override;
+	void display(SpriteBatchAlias& i_spriteBatch) override;
+	static void setupTexture(Texture* i_texture, Vec2* i_origin);
+	static void Reset();
 	void getInput(float newX);
 };
