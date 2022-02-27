@@ -5,9 +5,9 @@
 Color Wall::m_Color = { { { 1.000000000f, 0.1f, 0.1f, 1.000000000f } } };
 
 
-Wall::Wall(Vec2* _position, float _width, float _height) : Rect(_position, _width,_height)
+Wall::Wall(Vec2* _position, float _width, float _height, WALLTYPE _wallType) : Rect(_position, _width,_height)
 {
-
+	m_WallType = _wallType;
 }
 
 void Wall::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
@@ -21,5 +21,14 @@ void Wall::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
 
 int Wall::getInternalLimit()
 {
+	switch (m_WallType)
+	{
+	case LEFT:
+		return position->x + m_width;
+	case RIGHT:
+		return position->x;
+	case UP:
+		return position->y + m_height;
+	}
 	return 0;
 }

@@ -76,6 +76,7 @@ private:
     Wall* rightWall;
     Brick* bricks;
 
+    std::unique_ptr<DirectX::Keyboard> m_keyboard;
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> m_batch;
     std::unique_ptr<DirectX::CommonStates> m_states;

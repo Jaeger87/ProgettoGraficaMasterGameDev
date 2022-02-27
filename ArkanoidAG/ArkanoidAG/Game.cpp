@@ -43,9 +43,9 @@ void Game::StartGame(int width, int height)
 {
     sphere = new Sphere(new Vec2(width / 2, height * 0.65f));
     paddle = new Paddle(new Vec2(width / 2, height * 0.88f),32,16);
-    leftWall = new Wall(new Vec2(width * 0.08f, 0), 20, height);
-    upWall = new Wall(new Vec2(width * 0.08f, 0), width * 0.84f, 20);
-    rightWall = new Wall(new Vec2(width * 0.92f, 0), 20, height);
+    leftWall = new Wall(new Vec2(width * 0.08f, 0), 20, height, Wall::WALLTYPE::LEFT);
+    upWall = new Wall(new Vec2(width * 0.08f, 0), width * 0.84f, 20, Wall::WALLTYPE::UP);
+    rightWall = new Wall(new Vec2(width * 0.92f, 0), 20, height, Wall::WALLTYPE::RIGHT);
 }
 
 #pragma region Frame Update
