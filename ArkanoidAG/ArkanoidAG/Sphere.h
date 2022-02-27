@@ -16,12 +16,13 @@ private:
 	bool alive = true;
 	bool cooldown = false;
 	enum class RECTCOLLISIONTYPE { LENGTH, WIDTH };
-	bool checkRectCollision(Rect& rect);
+	//bool checkRectCollision(Rect& rect);
 	bool lineCircle(Vec2& point1, Vec2& point2, RECTCOLLISIONTYPE type);
 	bool pointCircle(Vec2& point);
 	bool linePoint(Vec2& point1, Vec2& point2, float lineLen, Vec2& pointX);
 public:
 	Sphere(Vec2* _position);
+	bool checkRectCollision(Rect& rect);
 	void update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall);
 	void display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer) override;
 	static void Reset();

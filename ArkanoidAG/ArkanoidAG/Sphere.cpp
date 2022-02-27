@@ -15,7 +15,33 @@ Sphere::Sphere(Vec2* _position) : Entity(_position)
 
 bool Sphere::checkRectCollision(Rect& rect)
 {
-	return false;
+    Vec2 leftTop = Vec2(rect.position->x, rect.position->y);
+    Vec2 rightTop = Vec2(rect.position->x + rect.m_width, rect.position->y);
+    Vec2 leftBottom = Vec2(rect.position->x, rect.position->y + rect.m_height);
+    Vec2 rightBottom = Vec2(rect.position->x + rect.m_width, rect.position->y + rect.m_height);
+
+    boolean bottomCollision;
+    boolean topCollision = false;
+    boolean leftCollision;
+    boolean rightCollision = false;
+
+
+
+    bottomCollision = lineCircle(leftBottom, rightBottom, RECTCOLLISIONTYPE::WIDTH);
+    if (!bottomCollision)
+        topCollision = lineCircle(leftTop, rightTop, RECTCOLLISIONTYPE::WIDTH);
+
+    if (topCollision || bottomCollision)
+        velocity.y *= -1;
+
+    leftCollision = lineCircle(leftTop, leftBottom, RECTCOLLISIONTYPE::LENGTH);
+    if (!leftCollision)
+        rightCollision = lineCircle(rightTop, rightBottom, RECTCOLLISIONTYPE::LENGTH);
+
+    if (leftCollision || rightCollision)
+        velocity.x *= -1;
+
+    return topCollision || bottomCollision || leftCollision || rightCollision;
 }
 
 bool Sphere::lineCircle(Vec2& point1, Vec2& point2, RECTCOLLISIONTYPE type)
