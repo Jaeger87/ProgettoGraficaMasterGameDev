@@ -21,7 +21,7 @@ void Paddle::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
         DirectX::Colors::White, 0.f, *m_origin);
 }
 
-void Paddle::getInput(float newX)
+void getInput(float newX, Wall* leftWall, Wall* rifhtWall)
 {
 
 }

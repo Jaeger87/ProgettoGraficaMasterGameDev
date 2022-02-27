@@ -12,4 +12,5 @@ private:
 public:
 	Wall(Vec2* _position, float _width, float _height);
 	void display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer) override;
+	int getInternalLimit();
 };

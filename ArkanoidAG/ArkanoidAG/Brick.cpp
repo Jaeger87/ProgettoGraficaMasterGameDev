@@ -17,7 +17,18 @@ void Brick::setupTexture(Texture* i_FullLifeTexture, Texture* i_HalfLifeTexture,
 
 void Brick::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
 {
-    
+    if (!isAlive())
+        return;
+
+    if (life == LIFEBRICK::HALF)
+    {
+        i_spriteBatch->Draw(m_texture_HalfLife->Get(), *position, nullptr,
+            DirectX::Colors::White, 0.f, *m_origin, 0.5);
+        return;
+    }
+
+    i_spriteBatch->Draw(m_texture_FullLife->Get(), *position, nullptr,
+        DirectX::Colors::White, 0.f, *m_origin, 0.5);
 }
 
 bool Brick::isAlive()

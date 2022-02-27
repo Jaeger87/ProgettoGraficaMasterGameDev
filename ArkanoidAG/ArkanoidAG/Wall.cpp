@@ -18,3 +18,8 @@ void Wall::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
 	DirectX::VertexPositionColor v4(Vec2(position->x, position->y + m_height), m_Color);
 	i_Drawer->DrawQuad(v1, v2, v3, v4);	
 }
+
+int Wall::getInternalLimit()
+{
+	return 0;
+}
