@@ -10,7 +10,7 @@ Vec2* Sphere::m_origin;
 
 Sphere::Sphere(Vec2* _position) : Entity(_position)
 {
-    velocity = Vec2(0, 0);
+    velocity = Vec2(1.8f, -1.8f);
 }
 
 bool Sphere::checkRectCollision(Rect& rect)

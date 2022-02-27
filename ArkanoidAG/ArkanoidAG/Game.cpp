@@ -20,7 +20,7 @@ Game::Game() noexcept(false)
 // Initialize the Direct3D resources required to run.
 void Game::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation)
 {
-    StartGame();
+    StartGame(width, height);
     m_deviceResources->SetWindow(window, width, height, rotation);
 
     m_deviceResources->CreateDeviceResources();
@@ -39,11 +39,13 @@ void Game::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATIO
     
 }
 
-void Game::StartGame()
+void Game::StartGame(int width, int height)
 {
-    sphere = new Sphere(new Vec2(200, 300));
-    paddle = new Paddle(new Vec2(100, 400),32,16);
-    leftWall = new Wall(new Vec2(100, 50), 20, 400);
+    sphere = new Sphere(new Vec2(width / 2, height * 0.65f));
+    paddle = new Paddle(new Vec2(width / 2, height * 0.88f),32,16);
+    leftWall = new Wall(new Vec2(width * 0.08f, 0), 20, height);
+    upWall = new Wall(new Vec2(width * 0.08f, 0), width * 0.84f, 20);
+    rightWall = new Wall(new Vec2(width * 0.92f, 0), 20, height);
 }
 
 #pragma region Frame Update
@@ -101,6 +103,8 @@ void Game::Render()
     m_batch->Begin();
 
     leftWall->display(m_spriteBatch, m_batch);
+    upWall->display(m_spriteBatch, m_batch);
+    rightWall->display(m_spriteBatch, m_batch);
 
     m_batch->End();
 

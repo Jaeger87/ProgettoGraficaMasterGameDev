@@ -61,7 +61,7 @@ private:
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
 
-    void StartGame();
+    void StartGame(int width, int height);
 
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
@@ -72,6 +72,8 @@ private:
     Sphere* sphere;
     Paddle* paddle;
     Wall* leftWall;
+    Wall* upWall;
+    Wall* rightWall;
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> m_batch;

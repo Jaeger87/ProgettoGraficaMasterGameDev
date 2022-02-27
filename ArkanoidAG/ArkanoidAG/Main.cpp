@@ -29,8 +29,8 @@ public:
         m_visible(true),
         m_in_sizemove(false),
         m_DPI(96.f),
-        m_logicalWidth(800.f),
-        m_logicalHeight(600.f),
+        m_logicalWidth(500.f),
+        m_logicalHeight(500.f),
         m_nativeOrientation(DisplayOrientations::None),
         m_currentOrientation(DisplayOrientations::None)
     {
