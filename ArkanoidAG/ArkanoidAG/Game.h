@@ -74,6 +74,7 @@ private:
     Wall* leftWall;
     Wall* upWall;
     Wall* rightWall;
+    Brick* bricks;
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> m_batch;

@@ -10,7 +10,7 @@ Vec2* Sphere::m_origin;
 
 Sphere::Sphere(Vec2* _position) : Entity(_position)
 {
-    velocity = Vec2(1.8f, -1.8f);
+    velocity = Vec2(1.0f, 1.0f);
 }
 
 bool Sphere::checkRectCollision(Rect& rect)
@@ -37,7 +37,7 @@ bool Sphere::linePoint(Vec2& point1, Vec2& point2, float lineLen, Vec2& pointX)
 
 void Sphere::update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall)
 {
-    //position += velocity;
+    *position += velocity;
 
     /*
     

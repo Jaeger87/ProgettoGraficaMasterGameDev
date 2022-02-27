@@ -68,6 +68,7 @@ void Game::Update(DX::StepTimer const& timer)
     float elapsedTime = float(timer.GetElapsedSeconds());
 
     // TODO: Add your game logic here.
+    sphere->update(*paddle, bricks, 0, *leftWall, *upWall, *rightWall);
     elapsedTime;
 
     PIXEndEvent();
