@@ -122,24 +122,23 @@ void Sphere::update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftW
 {
     *position += velocity;
 
-    /*
+  
     
     // CheckWalls
-    if (position.x - radius <= 0 || position.x + radius >= processing.width)
+    if (position->x - radius <= leftWall.getInternalLimit() || position->x + radius >= rightWall.getInternalLimit())
     {
         cooldown = false;
         velocity.x *= -1;
     }
     
-    if (position.y - radius <= 0)
+    if (position->y - radius <= upWall.getInternalLimit())
     {
         cooldown = false;
         velocity.y *= -1;
     }
-
+    /*
     if (velocity.y + radius >= processing.height)
         alive = false;
-
     */
     if (!cooldown && checkRectCollision(paddle))
     {

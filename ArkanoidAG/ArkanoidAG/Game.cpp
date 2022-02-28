@@ -21,6 +21,10 @@ Game::Game() noexcept(false)
 void Game::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation)
 {
     StartGame(width, height);
+
+    m_keyboard = std::make_unique<Keyboard>();
+    m_keyboard->SetWindow(reinterpret_cast<ABI::Windows::UI::Core::ICoreWindow*>(window));
+
     m_deviceResources->SetWindow(window, width, height, rotation);
 
     m_deviceResources->CreateDeviceResources();
@@ -68,6 +72,13 @@ void Game::Update(DX::StepTimer const& timer)
     float elapsedTime = float(timer.GetElapsedSeconds());
 
     // TODO: Add your game logic here.
+
+    auto kb = m_keyboard->GetState();
+    if (kb.Escape)
+    {
+        ExitGame();
+    }
+
     sphere->update(*paddle, bricks, 0, *leftWall, *upWall, *rightWall);
     elapsedTime;
 
