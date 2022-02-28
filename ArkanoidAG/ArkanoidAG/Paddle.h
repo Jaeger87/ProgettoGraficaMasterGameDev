@@ -17,5 +17,5 @@ public:
 	void display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer) override;
 	static void setupTexture(Texture* i_texture, Vec2* i_origin);
 	static void Reset();
-	void getInput(float newX, Wall* leftWall, Wall* rifhtWall);
+	void getInput(float deltaX, Wall* leftWall, Wall* rightWall);
 };
