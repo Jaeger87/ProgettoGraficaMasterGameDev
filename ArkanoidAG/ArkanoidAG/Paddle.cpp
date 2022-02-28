@@ -17,13 +17,21 @@ void Paddle::setupTexture(Texture* i_texture, Vec2* i_origin)
 
 void Paddle::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
 {
-    i_spriteBatch->Draw(m_texture->Get(), *position, nullptr,
-        DirectX::Colors::White, 0.f, *m_origin);
+    RECT m_stretchRect;
+
+    m_stretchRect.left = position->x;
+    m_stretchRect.top = position->y;
+    m_stretchRect.right = position->x + m_width;
+    m_stretchRect.bottom = position->y + m_height;
+
+    i_spriteBatch->Draw(m_texture->Get(), m_stretchRect, nullptr,
+        DirectX::Colors::White);
 }
 
 void Paddle::getInput(float deltaX, Wall* leftWall, Wall* rightWall)
 {
-    //if(position->x + deltaX < leftWall.)
+    if (position->x + deltaX <= leftWall->getInternalLimit() || position->x + deltaX + m_width >= rightWall->getInternalLimit())
+        return;
     position->x += deltaX;
 }
 

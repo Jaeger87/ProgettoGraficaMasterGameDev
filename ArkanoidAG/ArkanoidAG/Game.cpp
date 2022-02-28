@@ -46,7 +46,7 @@ void Game::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATIO
 void Game::StartGame(int width, int height)
 {
     sphere = new Sphere(new Vec2(width / 2, height * 0.65f));
-    paddle = new Paddle(new Vec2(width / 2, height * 0.88f),32,16);
+    paddle = new Paddle(new Vec2(width / 2, height * 0.88f),64,16);
     leftWall = new Wall(new Vec2(width * 0.08f, 0), 20, height, Wall::WALLTYPE::LEFT);
     upWall = new Wall(new Vec2(width * 0.08f, 0), width * 0.84f, 20, Wall::WALLTYPE::UP);
     rightWall = new Wall(new Vec2(width * 0.92f, 0), 20, height, Wall::WALLTYPE::RIGHT);
@@ -77,6 +77,16 @@ void Game::Update(DX::StepTimer const& timer)
     if (kb.Escape)
     {
         ExitGame();
+    }
+
+    if (kb.Left)
+    {
+        paddle->getInput(-paddleMovementDelta, leftWall, rightWall);
+    }
+
+    if (kb.Right)
+    {
+        paddle->getInput(paddleMovementDelta, leftWall, rightWall);
     }
 
     sphere->update(*paddle, bricks, 0, *leftWall, *upWall, *rightWall);

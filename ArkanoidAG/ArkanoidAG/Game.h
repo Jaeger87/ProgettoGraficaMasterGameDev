@@ -84,4 +84,6 @@ private:
     Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
     DirectX::SimpleMath::Vector2 m_screenPos;
     DirectX::SimpleMath::Vector2 m_origin;
+
+    const float paddleMovementDelta = 5.0f;
 };

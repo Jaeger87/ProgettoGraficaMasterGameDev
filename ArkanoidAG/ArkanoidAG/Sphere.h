@@ -11,8 +11,8 @@ private:
 	static Vec2* m_origin;
 	static Color sphereColor;
 	Vec2 velocity;
-	const float radius = 16;
-	const float SQUARERADIUS = 16 ^ 2;
+	const float radius = 8;
+	const float SQUARERADIUS = 8 ^ 2;
 	bool alive = true;
 	bool cooldown = false;
 	enum class RECTCOLLISIONTYPE { LENGTH, WIDTH };

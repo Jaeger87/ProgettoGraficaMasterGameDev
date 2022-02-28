@@ -1,5 +1,6 @@
 #pragma once
 #include "Rect.h"
+#include "Wall.h"
 
 class Wall;
 

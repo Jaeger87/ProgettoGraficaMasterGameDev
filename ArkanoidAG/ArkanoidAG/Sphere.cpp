@@ -163,8 +163,15 @@ void Sphere::setupTexture(Texture* i_texture, Vec2* i_origin)
 
 void Sphere::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
 {
-    i_spriteBatch->Draw(m_texture->Get(), *position, nullptr,
-        DirectX::Colors::White, 0.f, *m_origin, 0.5);
+    RECT m_stretchRect;
+
+    m_stretchRect.left = position->x - radius;
+    m_stretchRect.top = position->y - radius;
+    m_stretchRect.right = position->x + radius;
+    m_stretchRect.bottom = position->y + radius;
+
+    i_spriteBatch->Draw(m_texture->Get(), m_stretchRect, nullptr,
+        DirectX::Colors::White);
 }
 
 /*
