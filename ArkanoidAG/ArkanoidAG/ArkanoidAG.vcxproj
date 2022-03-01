@@ -288,8 +288,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Assets\Brick-01.png" />
-    <Image Include="Assets\Brick-02.png" />
+    <Image Include="Assets\BrickHalf.png" />
+    <Image Include="Assets\BrickFull.png" />
     <Image Include="Assets\Logo.scale-200.png" />
     <Image Include="Assets\Paddle.png" />
     <Image Include="Assets\SmallLogo.scale-200.png" />

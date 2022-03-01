@@ -1,34 +1,41 @@
 #include "pch.h"
 #include "Brick.h"
 
-Color Brick::ColorFullLife = { { { 0.1f, 1.000000000f, 0.1f, 1.000000000f } } };
-Color Brick::ColorHalfLife = { { { 1.000000000f, 0.1f, 0.1f, 1.000000000f } } };
-
 Texture* Brick::m_texture_FullLife;
 Texture* Brick::m_texture_HalfLife;
-Vec2* Brick::m_origin;
 
-void Brick::setupTexture(Texture* i_FullLifeTexture, Texture* i_HalfLifeTexture, Vec2* i_origin)
+void Brick::setupTexture(Texture* i_FullLifeTexture, Texture* i_HalfLifeTexture)
 {
     m_texture_FullLife = i_FullLifeTexture;
     m_texture_HalfLife = i_HalfLifeTexture;
-    m_origin = i_origin;
+}
+
+Brick::Brick(Vec2* position, LIFEBRICK i_life) : Rect(position, 32, 16)
+{
+    life = i_life;
 }
 
 void Brick::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
 {
     if (!isAlive())
         return;
+    RECT m_stretchRect;
+
+    m_stretchRect.left = position->x;
+    m_stretchRect.top = position->y;
+    m_stretchRect.right = position->x + m_width;
+    m_stretchRect.bottom = position->y + m_height;
+
 
     if (life == LIFEBRICK::HALF)
     {
-        i_spriteBatch->Draw(m_texture_HalfLife->Get(), *position, nullptr,
-            DirectX::Colors::White, 0.f, *m_origin, 0.5);
+        i_spriteBatch->Draw(m_texture_HalfLife->Get(), m_stretchRect, nullptr,
+            DirectX::Colors::White);
         return;
     }
 
-    i_spriteBatch->Draw(m_texture_FullLife->Get(), *position, nullptr,
-        DirectX::Colors::White, 0.f, *m_origin, 0.5);
+    i_spriteBatch->Draw(m_texture_FullLife->Get(), m_stretchRect, nullptr,
+        DirectX::Colors::White);
 }
 
 bool Brick::isAlive()

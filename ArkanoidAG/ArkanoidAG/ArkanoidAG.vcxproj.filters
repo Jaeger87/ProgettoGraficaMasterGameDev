@@ -85,10 +85,10 @@
     <Image Include="Assets\WideLogo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\Brick-01.png">
+    <Image Include="Assets\BrickHalf.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\Brick-02.png">
+    <Image Include="Assets\BrickFull.png">
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\Sphere.png">

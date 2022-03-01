@@ -74,7 +74,7 @@ private:
     Wall* leftWall;
     Wall* upWall;
     Wall* rightWall;
-    Brick* bricks;
+    Brick** bricks;
 
     std::unique_ptr<DirectX::Keyboard> m_keyboard;
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
@@ -86,4 +86,5 @@ private:
     DirectX::SimpleMath::Vector2 m_origin;
 
     const float paddleMovementDelta = 5.0f;
+    const int bricksPerLevel = 1;
 };

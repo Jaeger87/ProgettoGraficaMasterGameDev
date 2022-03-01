@@ -8,7 +8,6 @@ class Sphere : public Entity
 {
 private:
 	static Texture* m_texture;
-	static Vec2* m_origin;
 	static Color sphereColor;
 	Vec2 velocity;
 	const float radius = 8;
@@ -23,9 +22,9 @@ private:
 public:
 	Sphere(Vec2* _position);
 	bool checkRectCollision(Rect& rect);
-	void update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall);
+	void update(Paddle& paddle, Brick** bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall);
 	void display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer) override;
 	static void Reset();
-	static void setupTexture(Texture* i_texture, Vec2* i_origin);
+	static void setupTexture(Texture* i_texture);
 	
 };

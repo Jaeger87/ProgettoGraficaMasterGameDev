@@ -11,7 +11,6 @@ class Entity
 
 protected:
 	Vec2* position;
-	Vec2* m_origin;
 
 public:
 	Entity(Vec2* _position);

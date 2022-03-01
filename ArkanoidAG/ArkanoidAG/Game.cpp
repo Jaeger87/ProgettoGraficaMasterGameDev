@@ -50,6 +50,12 @@ void Game::StartGame(int width, int height)
     leftWall = new Wall(new Vec2(width * 0.08f, 0), 20, height, Wall::WALLTYPE::LEFT);
     upWall = new Wall(new Vec2(width * 0.08f, 0), width * 0.84f, 20, Wall::WALLTYPE::UP);
     rightWall = new Wall(new Vec2(width * 0.92f, 0), 20, height, Wall::WALLTYPE::RIGHT);
+    bricks = new Brick*[bricksPerLevel];
+
+    for (int i = 0; i < bricksPerLevel; i++)
+    {
+        bricks[i] = new Brick(new Vec2(300, 120), Brick::LIFEBRICK::HALF);
+    }
 }
 
 #pragma region Frame Update
@@ -132,6 +138,10 @@ void Game::Render()
 
     m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
     
+    for (int i = 0; i < bricksPerLevel; i++)
+    {
+        bricks[i]->display(m_spriteBatch, m_batch);
+    }
 
     sphere->display(m_spriteBatch, m_batch);
     paddle->display(m_spriteBatch, m_batch);
@@ -248,8 +258,8 @@ void Game::CreateDeviceDependentResources()
 
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_textureSphere = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_texturePaddle = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_textureBrick01 = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_textureBrick02 = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_textureBrickHalf = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_textureBrickFull = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
 
     auto context = m_deviceResources->GetD3DDeviceContext();
     m_spriteBatch = std::make_unique<SpriteBatch>(context);
@@ -272,6 +282,8 @@ void Game::CreateDeviceDependentResources()
         * Matrix::CreateTranslation(-1.f, 1.f, 0.f);
     m_effect->SetProjection(proj);
 
+
+
     ComPtr<ID3D11Resource> resourceSphere;
     DX::ThrowIfFailed(
         CreateWICTextureFromFile(device, L"Assets/Sphere.png",
@@ -284,12 +296,9 @@ void Game::CreateDeviceDependentResources()
     CD3D11_TEXTURE2D_DESC sphereDesc;
     sphereTex->GetDesc(&sphereDesc);
 
-    m_origin.x = float(sphereDesc.Width / 2);
-    m_origin.y = float(sphereDesc.Height / 2);
-
     
 
-    Sphere::setupTexture(m_textureSphere,&m_origin);
+    Sphere::setupTexture(m_textureSphere);
 
 
     ComPtr<ID3D11Resource> resourcePaddle;
@@ -302,12 +311,37 @@ void Game::CreateDeviceDependentResources()
     DX::ThrowIfFailed(resourcePaddle.As(&paddleTex));
 
     CD3D11_TEXTURE2D_DESC paddleDesc;
-    sphereTex->GetDesc(&paddleDesc);
+    paddleTex->GetDesc(&paddleDesc);
 
-    m_origin.x = float(paddleDesc.Width / 2);
-    m_origin.y = float(paddleDesc.Height / 2);
+    Paddle::setupTexture(m_texturePaddle);
 
-    Paddle::setupTexture(m_texturePaddle, &m_origin);
+
+    ComPtr<ID3D11Resource> resourceBrickHalf;
+    DX::ThrowIfFailed(
+        CreateWICTextureFromFile(device, L"Assets/BrickHalf.png",
+            resourceBrickHalf.GetAddressOf(),
+            m_textureBrickHalf->ReleaseAndGetAddressOf()));
+
+    ComPtr<ID3D11Texture2D> brickHalfTex;
+    DX::ThrowIfFailed(resourceBrickHalf.As(&brickHalfTex));
+
+    CD3D11_TEXTURE2D_DESC brickHalfDesc;
+    brickHalfTex->GetDesc(&brickHalfDesc);
+
+    ComPtr<ID3D11Resource> resourceBrickFull;
+    DX::ThrowIfFailed(
+        CreateWICTextureFromFile(device, L"Assets/BrickFull.png",
+            resourceBrickFull.GetAddressOf(),
+            m_textureBrickFull->ReleaseAndGetAddressOf()));
+
+    ComPtr<ID3D11Texture2D> brickFullTex;
+    DX::ThrowIfFailed(resourceBrickFull.As(&brickFullTex));
+
+    CD3D11_TEXTURE2D_DESC brickFullDesc;
+    brickFullTex->GetDesc(&brickFullDesc);
+
+    Brick::setupTexture(m_textureBrickFull, m_textureBrickHalf);
+
 
 }
 

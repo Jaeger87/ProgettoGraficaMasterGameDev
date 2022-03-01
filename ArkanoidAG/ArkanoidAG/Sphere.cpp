@@ -6,7 +6,6 @@ Color Sphere::sphereColor = { { { 0.1f, 1.000000000f, 0.1f, 1.000000000f } } };
 
 
 Texture* Sphere::m_texture;
-Vec2* Sphere::m_origin;
 
 Sphere::Sphere(Vec2* _position) : Entity(_position)
 {
@@ -118,7 +117,7 @@ bool Sphere::linePoint(Vec2& point1, Vec2& point2, float lineLen, Vec2& pointX)
 
 
 
-void Sphere::update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall)
+void Sphere::update(Paddle& paddle, Brick** bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall)
 {
     *position += velocity;
 
@@ -146,19 +145,18 @@ void Sphere::update(Paddle& paddle, Brick* bricks, int bricksLength, Wall& leftW
     }
 
     for (int brickIndex = 0; brickIndex < bricksLength; brickIndex++) {
-        if (bricks[brickIndex].isAlive() && checkRectCollision(bricks[brickIndex]))
+        if (bricks[brickIndex]->isAlive() && checkRectCollision(*bricks[brickIndex]))
         {
-            bricks[brickIndex].hit();
+            bricks[brickIndex]->hit();
             cooldown = false;
         }
 
     }
 }
 
-void Sphere::setupTexture(Texture* i_texture, Vec2* i_origin)
+void Sphere::setupTexture(Texture* i_texture)
 {
     m_texture = i_texture;
-    m_origin = i_origin;
 }
 
 void Sphere::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
