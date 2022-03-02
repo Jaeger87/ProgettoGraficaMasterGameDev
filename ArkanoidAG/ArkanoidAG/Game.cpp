@@ -45,7 +45,6 @@ void Game::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATIO
 
 void Game::StartGame(int width, int height)
 {
-    playerScore = 0;
     sphere = new Sphere(new Vec2(width / 2, height * 0.65f));
     paddle = new Paddle(new Vec2(width / 2, height * 0.88f),64,16);
     leftWall = new Wall(new Vec2(width * 0.08f, 0), 20, height, Wall::WALLTYPE::LEFT);

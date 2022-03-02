@@ -96,5 +96,5 @@ private:
     const float startBricksY = 70;
     const float paddingBrikcs = 5;
 
-    int playerScore = 0;
+    int highScore = 0;
 };
