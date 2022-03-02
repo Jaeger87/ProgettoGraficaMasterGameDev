@@ -10,7 +10,7 @@ void Brick::setupTexture(Texture* i_FullLifeTexture, Texture* i_HalfLifeTexture)
     m_texture_HalfLife = i_HalfLifeTexture;
 }
 
-Brick::Brick(Vec2* position, LIFEBRICK i_life) : Rect(position, 32, 16)
+Brick::Brick(Vec2* position, LIFEBRICK i_life) : Rect(position, BWIDTH, BHEIGHT)
 {
     life = i_life;
 }

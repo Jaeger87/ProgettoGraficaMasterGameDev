@@ -62,6 +62,8 @@ private:
     void CreateWindowSizeDependentResources();
 
     void StartGame(int width, int height);
+    void initializeBricksLevel1();
+    void initializeBricksLevel2();
 
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
@@ -86,5 +88,13 @@ private:
     DirectX::SimpleMath::Vector2 m_origin;
 
     const float paddleMovementDelta = 5.0f;
-    const int bricksPerLevel = 1;
+    const int bricksPerLevel = 90;
+    const int bricksPerRow = 18;
+
+
+    const float startBricksX = 115;
+    const float startBricksY = 70;
+    const float paddingBrikcs = 5;
+
+    int playerScore = 0;
 };

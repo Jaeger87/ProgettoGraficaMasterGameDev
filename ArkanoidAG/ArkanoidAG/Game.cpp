@@ -45,6 +45,7 @@ void Game::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATIO
 
 void Game::StartGame(int width, int height)
 {
+    playerScore = 0;
     sphere = new Sphere(new Vec2(width / 2, height * 0.65f));
     paddle = new Paddle(new Vec2(width / 2, height * 0.88f),64,16);
     leftWall = new Wall(new Vec2(width * 0.08f, 0), 20, height, Wall::WALLTYPE::LEFT);
@@ -52,9 +53,29 @@ void Game::StartGame(int width, int height)
     rightWall = new Wall(new Vec2(width * 0.92f, 0), 20, height, Wall::WALLTYPE::RIGHT);
     bricks = new Brick*[bricksPerLevel];
 
+    initializeBricksLevel2();
+}
+
+void Game::initializeBricksLevel1()
+{
     for (int i = 0; i < bricksPerLevel; i++)
     {
-        bricks[i] = new Brick(new Vec2(300, 120), Brick::LIFEBRICK::HALF);
+        int x = startBricksX + (i % bricksPerRow) * Brick::BWIDTH + paddingBrikcs;
+        int y = startBricksY + (i / bricksPerRow) * Brick::BHEIGHT + paddingBrikcs;
+        bricks[i] = new Brick(new Vec2(x, y), Brick::LIFEBRICK::HALF);
+    }
+}
+
+void Game::initializeBricksLevel2()
+{
+    for (int i = 0; i < bricksPerLevel; i++)
+    {
+        int x = startBricksX + (i % bricksPerRow) * Brick::BWIDTH + paddingBrikcs;
+        int y = startBricksY + (i / bricksPerRow) * Brick::BHEIGHT + paddingBrikcs;
+
+        Brick::LIFEBRICK life = (i / bricksPerRow) % 2 == 0 ? Brick::LIFEBRICK::FULL : Brick::LIFEBRICK::HALF;
+
+        bricks[i] = new Brick(new Vec2(x, y), life);
     }
 }
 
@@ -95,7 +116,7 @@ void Game::Update(DX::StepTimer const& timer)
         paddle->getInput(paddleMovementDelta, leftWall, rightWall);
     }
 
-    sphere->update(*paddle, bricks, 0, *leftWall, *upWall, *rightWall);
+    sphere->update(*paddle, bricks, bricksPerLevel, *leftWall, *upWall, *rightWall);
     elapsedTime;
 
     PIXEndEvent();

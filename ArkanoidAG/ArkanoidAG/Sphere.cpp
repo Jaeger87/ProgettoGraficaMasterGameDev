@@ -139,6 +139,7 @@ void Sphere::update(Paddle& paddle, Brick** bricks, int bricksLength, Wall& left
     if (velocity.y + radius >= processing.height)
         alive = false;
     */
+
     if (!cooldown && checkRectCollision(paddle))
     {
         cooldown = true;
@@ -171,16 +172,6 @@ void Sphere::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
     i_spriteBatch->Draw(m_texture->Get(), m_stretchRect, nullptr,
         DirectX::Colors::White);
 }
-
-/*
-void Sphere::display(DirectX::SpriteBatch *i_spriteBatch)
-{
-    
-    i_spriteBatch->Draw(m_texture->Get(), position, nullptr,
-        sphereColor, 0.f, m_origin, 0.75f);
-    
-}
-*/
 
 void Sphere::Reset()
 {
