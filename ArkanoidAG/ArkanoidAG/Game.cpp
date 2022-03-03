@@ -148,6 +148,12 @@ void Game::Render()
     sphere->display(m_spriteBatch, m_batch);
     paddle->display(m_spriteBatch, m_batch);
     
+    const wchar_t* output = L"Hello World";
+
+    Vec2 origin = m_font->MeasureString(output) / 2.f;
+
+    m_font->DrawString(m_spriteBatch.get(), output,
+        m_fontPos, Colors::White, 0.f, origin);
 
     m_spriteBatch->End();
 
@@ -263,6 +269,8 @@ void Game::CreateDeviceDependentResources()
 
     // TODO: Initialize device dependent objects here (independent of window size).
 
+    m_font = std::make_unique<SpriteFont>(device, L"Assets/myfile.spritefont");
+
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_textureSphere = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_texturePaddle = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_textureBrickHalf = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
@@ -354,6 +362,8 @@ void Game::CreateDeviceDependentResources()
 
     m_stars = std::make_unique<ScrollingBackground>();
     m_stars->Load(m_backgroundTex.Get());
+
+    
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -366,6 +376,9 @@ void Game::CreateWindowSizeDependentResources()
     m_screenPos.y = float(size.bottom) / 2.f;
 
     m_stars->SetWindow(size.right - 120, size.bottom);
+
+    m_fontPos.x = float(size.right) / 2.f;
+    m_fontPos.y = float(size.bottom) / 2.f;
 }
 
 
@@ -374,6 +387,7 @@ void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
     m_spriteBatch.reset();
+    m_font.reset();
     m_batch.reset();
     m_effect.reset();
     m_states.reset();

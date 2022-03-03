@@ -116,5 +116,8 @@
   <ItemGroup>
     <None Include="ArkanoidAG_TemporaryKey.pfx" />
     <None Include="packages.config" />
+    <None Include="Assets\myfile.spritefont">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
 </Project>

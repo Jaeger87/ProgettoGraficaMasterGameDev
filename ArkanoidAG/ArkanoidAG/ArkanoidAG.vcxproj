@@ -288,6 +288,9 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="ArkanoidAG_TemporaryKey.pfx" />
+    <None Include="Assets\myfile.spritefont">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

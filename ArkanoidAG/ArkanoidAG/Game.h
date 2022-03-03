@@ -89,6 +89,8 @@ private:
     DirectX::SimpleMath::Vector2 m_origin;
     std::unique_ptr<ScrollingBackground> m_stars;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_backgroundTex;
+    std::unique_ptr<DirectX::SpriteFont> m_font;
+    DirectX::SimpleMath::Vector2 m_fontPos;
 
     const float paddleMovementDelta = 5.0f;
     const int bricksPerLevel = 90;
