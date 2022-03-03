@@ -95,7 +95,7 @@ private:
     const int bricksPerRow = 18;
 
 
-    const float startBricksX = 115;
+    const float startBricksX = 43;
     const float startBricksY = 70;
     const float paddingBrikcs = 5;
 

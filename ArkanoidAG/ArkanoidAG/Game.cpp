@@ -46,10 +46,10 @@ void Game::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATIO
 void Game::StartGame(int width, int height)
 {
     sphere = new Sphere(new Vec2(width / 2, height * 0.65f));
-    paddle = new Paddle(new Vec2(width / 2, height * 0.88f),64,16);
-    leftWall = new Wall(new Vec2(width * 0.08f, 0), 20, height, Wall::WALLTYPE::LEFT);
-    upWall = new Wall(new Vec2(width * 0.08f, 0), width * 0.84f, 20, Wall::WALLTYPE::UP);
-    rightWall = new Wall(new Vec2(width * 0.92f, 0), 20, height, Wall::WALLTYPE::RIGHT);
+    paddle = new Paddle(new Vec2(width * 0.84f / 2 - 32, height * 0.88f),64,16);
+    leftWall = new Wall(new Vec2(0, 0), 20, height, Wall::WALLTYPE::LEFT);
+    upWall = new Wall(new Vec2(0, 0), width * 0.84f, 20, Wall::WALLTYPE::UP);
+    rightWall = new Wall(new Vec2(width * 0.84f - 20, 0), 20, height, Wall::WALLTYPE::RIGHT);
     bricks = new Brick*[bricksPerLevel];
 
     initializeBricksLevel2();
@@ -365,7 +365,7 @@ void Game::CreateWindowSizeDependentResources()
     m_screenPos.x = float(size.right) / 2.f;
     m_screenPos.y = float(size.bottom) / 2.f;
 
-    m_stars->SetWindow(size.right + 20, size.bottom);
+    m_stars->SetWindow(size.right - 120, size.bottom);
 }
 
 
