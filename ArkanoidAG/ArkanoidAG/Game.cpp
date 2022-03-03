@@ -98,7 +98,7 @@ void Game::Update(DX::StepTimer const& timer)
     float elapsedTime = float(timer.GetElapsedSeconds());
 
     // TODO: Add your game logic here.
-
+    m_stars->Update(elapsedTime * 200);
     auto kb = m_keyboard->GetState();
     if (kb.Escape)
     {
@@ -134,30 +134,12 @@ void Game::Render()
 
     Clear();
 
-    auto context = m_deviceResources->GetD3DDeviceContext();
-    PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Render");
-
-
-    // TODO: Add your rendering code here.
-
-    context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
-    context->OMSetDepthStencilState(m_states->DepthNone(), 0);
-    context->RSSetState(m_states->CullNone());
-
-    m_effect->Apply(context);
-
-    context->IASetInputLayout(m_inputLayout.Get());
-
-    m_batch->Begin();
-
-    leftWall->display(m_spriteBatch, m_batch);
-    upWall->display(m_spriteBatch, m_batch);
-    rightWall->display(m_spriteBatch, m_batch);
-
-    m_batch->End();
+   
 
     m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
     
+    m_stars->Draw(m_spriteBatch.get());
+
     for (int i = 0; i < bricksPerLevel; i++)
     {
         bricks[i]->display(m_spriteBatch, m_batch);
@@ -169,21 +151,26 @@ void Game::Render()
 
     m_spriteBatch->End();
 
+    auto context = m_deviceResources->GetD3DDeviceContext();
+    PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Render");
 
 
+    // TODO: Add your rendering code here.
 
-    /*
+    context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
+    context->OMSetDepthStencilState(m_states->DepthNone(), 0);
+    context->RSSetState(m_states->CullNone());
+
+    m_effect->Apply(context);
+    context->IASetInputLayout(m_inputLayout.Get());
+
     m_batch->Begin();
 
-    VertexPositionColor v1(Vector3(0.f, 0.5f, 0.5f), Colors::Yellow);
-    VertexPositionColor v2(Vector3(0.5f, -0.5f, 0.5f), Colors::Yellow);
-    VertexPositionColor v3(Vector3(-0.5f, -0.5f, 0.5f), Colors::Yellow);
-
-    m_batch->DrawTriangle(v1, v2, v3);
+    leftWall->display(m_spriteBatch, m_batch);
+    upWall->display(m_spriteBatch, m_batch);
+    rightWall->display(m_spriteBatch, m_batch);
 
     m_batch->End();
-    */
-
 
     PIXEndEvent(context);
 
@@ -362,7 +349,11 @@ void Game::CreateDeviceDependentResources()
 
     Brick::setupTexture(m_textureBrickFull, m_textureBrickHalf);
 
+    DX::ThrowIfFailed(CreateWICTextureFromFile(device, L"Assets/starfield.png",
+        nullptr, m_backgroundTex.ReleaseAndGetAddressOf()));
 
+    m_stars = std::make_unique<ScrollingBackground>();
+    m_stars->Load(m_backgroundTex.Get());
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -373,6 +364,8 @@ void Game::CreateWindowSizeDependentResources()
     auto size = m_deviceResources->GetOutputSize();
     m_screenPos.x = float(size.right) / 2.f;
     m_screenPos.y = float(size.bottom) / 2.f;
+
+    m_stars->SetWindow(size.right + 20, size.bottom);
 }
 
 
@@ -385,6 +378,13 @@ void Game::OnDeviceLost()
     m_effect.reset();
     m_states.reset();
     m_inputLayout.Reset();
+    m_stars.reset();
+    m_backgroundTex.Reset();
+    sphere->Reset();
+    paddle->Reset();
+
+    for (int i = 0; i < bricksPerLevel; i++)
+        bricks[i]->Reset();
 }
 
 void Game::OnDeviceRestored()

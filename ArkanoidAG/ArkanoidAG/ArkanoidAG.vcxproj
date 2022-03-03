@@ -256,6 +256,7 @@
     <ClInclude Include="Paddle.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="ScrollingBackground.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="Wall.h" />
@@ -297,6 +298,7 @@
     <Image Include="Assets\SmallLogo.scale-200.png" />
     <Image Include="Assets\Sphere.png" />
     <Image Include="Assets\SplashScreen.scale-200.png" />
+    <Image Include="Assets\starfield.png" />
     <Image Include="Assets\StoreLogo.png" />
     <Image Include="Assets\WideLogo.scale-200.png" />
   </ItemGroup>

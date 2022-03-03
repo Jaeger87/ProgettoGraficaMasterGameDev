@@ -5,6 +5,7 @@
 #pragma once
 
 #include "DeviceResources.h"
+#include "ScrollingBackground.h"
 #include "StepTimer.h"
 #include "Sphere.h"
 #include "Paddle.h"
@@ -86,6 +87,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
     DirectX::SimpleMath::Vector2 m_screenPos;
     DirectX::SimpleMath::Vector2 m_origin;
+    std::unique_ptr<ScrollingBackground> m_stars;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_backgroundTex;
 
     const float paddleMovementDelta = 5.0f;
     const int bricksPerLevel = 90;
