@@ -148,12 +148,14 @@ void Game::Render()
     sphere->display(m_spriteBatch, m_batch);
     paddle->display(m_spriteBatch, m_batch);
     
-    const wchar_t* output = L"Hello World";
+    const wchar_t* output = L"Score";
 
     Vec2 origin = m_font->MeasureString(output) / 2.f;
 
+    Vec2 scaleFont = Vec2(0.4f, 0.4f);
+
     m_font->DrawString(m_spriteBatch.get(), output,
-        m_fontPos, Colors::White, 0.f, origin);
+        m_fontPos, Colors::White, 0.f, origin, scaleFont);
 
     m_spriteBatch->End();
 
@@ -377,8 +379,8 @@ void Game::CreateWindowSizeDependentResources()
 
     m_stars->SetWindow(size.right - 120, size.bottom);
 
-    m_fontPos.x = float(size.right) / 2.f;
-    m_fontPos.y = float(size.bottom) / 2.f;
+    m_fontPos.x = float(size.right) * 0.92;
+    m_fontPos.y = float(size.bottom) * 0.20;
 }
 
 
