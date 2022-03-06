@@ -62,7 +62,7 @@ void Game::initializeBricksLevel1()
     {
         int x = startBricksX + (i % bricksPerRow) * Brick::BWIDTH + paddingBrikcs;
         int y = startBricksY + (i / bricksPerRow) * Brick::BHEIGHT + paddingBrikcs;
-        bricks[i] = new Brick(new Vec2(x, y), Brick::LIFEBRICK::HALF);
+        bricks[i] = new Brick(new Vec2(x, y), Brick::LIFEBRICK::HALF, scoreManager);
     }
 }
 
@@ -75,7 +75,7 @@ void Game::initializeBricksLevel2()
 
         Brick::LIFEBRICK life = (i / bricksPerRow) % 2 == 0 ? Brick::LIFEBRICK::FULL : Brick::LIFEBRICK::HALF;
 
-        bricks[i] = new Brick(new Vec2(x, y), life);
+        bricks[i] = new Brick(new Vec2(x, y), life, scoreManager);
     }
 }
 

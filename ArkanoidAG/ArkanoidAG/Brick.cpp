@@ -4,16 +4,22 @@
 Texture* Brick::m_texture_FullLife;
 Texture* Brick::m_texture_HalfLife;
 
+Brick::Brick(Vec2* position, LIFEBRICK i_life, ScoreManager* i_scoreManager) : Rect(position, BWIDTH, BHEIGHT)
+{
+    life = i_life;
+    m_ScoreManager = i_scoreManager;
+    if (life == LIFEBRICK::FULL)
+        m_scoreValue = 200;
+    else
+        m_scoreValue = 100;
+}
+
 void Brick::setupTexture(Texture* i_FullLifeTexture, Texture* i_HalfLifeTexture)
 {
     m_texture_FullLife = i_FullLifeTexture;
     m_texture_HalfLife = i_HalfLifeTexture;
 }
 
-Brick::Brick(Vec2* position, LIFEBRICK i_life) : Rect(position, BWIDTH, BHEIGHT)
-{
-    life = i_life;
-}
 
 void Brick::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
 {
@@ -45,10 +51,17 @@ bool Brick::isAlive()
 
 void Brick::hit()
 {
+    if (life == LIFEBRICK::DEAD)
+        return;
+
     if (life == LIFEBRICK::FULL)
         life = LIFEBRICK::HALF;
     else
+    {
         life = LIFEBRICK::DEAD;
+        m_ScoreManager->addPoints(m_scoreValue);
+    }
+        
 }
 
 void Brick::Reset()
