@@ -10,15 +10,23 @@ void ScoreManager::addPoints(int points)
 
 void ScoreManager::displayPoints(SpriteBatchAlias& i_spriteBatch)
 {
-	const wchar_t* output = L"Score";
-
-	Vec2 origin = (Vec2)m_font->get()->MeasureString(output) / 2.f;
-
 	Vec2 scaleFont = Vec2(0.4f, 0.4f);
+	const wchar_t* scoreString = L"Score";
 
-	m_font->get()->DrawString(i_spriteBatch.get(), output,
-		m_fontPos, DirectX::Colors::White, 0.f, origin, scaleFont);
+	Vec2 scoreStringOrigin = (Vec2)m_font->get()->MeasureString(scoreString) / 2.f;
+
 	
+
+	m_font->get()->DrawString(i_spriteBatch.get(), scoreString,
+		m_fontPos, DirectX::Colors::White, 0.f, scoreStringOrigin, scaleFont);
+
+	Vec2 scorePos = Vec2(m_fontPos.x, m_fontPos.y + 25);
+	std::string scoreValueString = std::to_string(m_Score);
+
+	Vec2 scoreValueOrigin = (Vec2)m_font->get()->MeasureString(scoreValueString.c_str()) / 2.f;
+
+	m_font->get()->DrawString(i_spriteBatch.get(), scoreValueString.c_str(),
+		scorePos, DirectX::Colors::White, 0.f, scoreValueOrigin, scaleFont);
 }
 
 void ScoreManager::setPosition(float i_X, float i_Y)

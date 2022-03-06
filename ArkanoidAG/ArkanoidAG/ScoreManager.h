@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 using SpriteBatchAlias = std::unique_ptr<DirectX::SpriteBatch>;
 using Vec2 = DirectX::SimpleMath::Vector2;
 using Microsoft::WRL::ComPtr;
