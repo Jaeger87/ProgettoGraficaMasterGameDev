@@ -173,6 +173,11 @@ void Sphere::display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer)
         DirectX::Colors::White);
 }
 
+bool Sphere::isAlive()
+{
+    return alive;
+}
+
 void Sphere::Reset()
 {
     m_texture->Reset();

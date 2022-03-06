@@ -79,6 +79,16 @@ void Game::initializeBricksLevel2()
     }
 }
 
+void Game::cleanMemory()
+{
+
+}
+
+void Game::restartGame()
+{
+
+}
+
 #pragma region Frame Update
 // Executes the basic game loop.
 void Game::Tick()
@@ -97,27 +107,50 @@ void Game::Update(DX::StepTimer const& timer)
     PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
 
     float elapsedTime = float(timer.GetElapsedSeconds());
-
+    
     // TODO: Add your game logic here.
     m_stars->Update(elapsedTime * 200);
     auto kb = m_keyboard->GetState();
+
     if (kb.Escape)
     {
         ExitGame();
     }
 
-    if (kb.Left)
+    if (!gameOver)
     {
-        paddle->getInput(-paddleMovementDelta, leftWall, rightWall);
+        if (kb.Left)
+        {
+            paddle->getInput(-paddleMovementDelta, leftWall, rightWall);
+        }
+
+        if (kb.Right)
+        {
+            paddle->getInput(paddleMovementDelta, leftWall, rightWall);
+        }
+
+        sphere->update(*paddle, bricks, bricksPerLevel, *leftWall, *upWall, *rightWall);
+
+        if (!sphere->isAlive())
+            gameOver = true;
     }
 
-    if (kb.Right)
+    else
     {
-        paddle->getInput(paddleMovementDelta, leftWall, rightWall);
-    }
+        if (kb.R)
+        {
 
-    sphere->update(*paddle, bricks, bricksPerLevel, *leftWall, *upWall, *rightWall);
-    elapsedTime;
+        }
+
+    }
+    
+
+
+
+
+
+    
+
 
     PIXEndEvent();
 }

@@ -24,6 +24,7 @@ public:
 	bool checkRectCollision(Rect& rect);
 	void update(Paddle& paddle, Brick** bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall);
 	void display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer) override;
+	bool isAlive();
 	static void Reset();
 	static void setupTexture(Texture* i_texture);
 	

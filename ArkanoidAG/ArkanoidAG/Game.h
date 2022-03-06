@@ -66,7 +66,8 @@ private:
     void StartGame(int width, int height);
     void initializeBricksLevel1();
     void initializeBricksLevel2();
-
+    void cleanMemory();
+    void restartGame();
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
 
@@ -93,6 +94,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_backgroundTex;
     std::unique_ptr<DirectX::SpriteFont> m_font;
 
+
     const float paddleMovementDelta = 5.0f;
     const int bricksPerLevel = 90;
     const int bricksPerRow = 18;
@@ -103,4 +105,6 @@ private:
     const float paddingBrikcs = 5;
 
     int highScore = 0;
+
+    bool gameOver = false;
 };
