@@ -7,8 +7,9 @@ Color Sphere::sphereColor = { { { 0.1f, 1.000000000f, 0.1f, 1.000000000f } } };
 
 Texture* Sphere::m_texture;
 
-Sphere::Sphere(Vec2* _position) : Entity(_position)
+Sphere::Sphere(Vec2* _position, float displayHeight) : Entity(_position)
 {
+    deathLine = displayHeight;
     velocity = Vec2(1.0f, 1.0f);
 }
 
@@ -121,8 +122,6 @@ void Sphere::update(Paddle& paddle, Brick** bricks, int bricksLength, Wall& left
 {
     *position += velocity;
 
-  
-    
     // CheckWalls
     if (position->x - radius <= leftWall.getInternalLimit() || position->x + radius >= rightWall.getInternalLimit())
     {
@@ -135,10 +134,10 @@ void Sphere::update(Paddle& paddle, Brick** bricks, int bricksLength, Wall& left
         cooldown = false;
         velocity.y *= -1;
     }
-    /*
-    if (velocity.y + radius >= processing.height)
+ 
+    if (position->y - radius >= deathLine)
         alive = false;
-    */
+
 
     if (!cooldown && checkRectCollision(paddle))
     {

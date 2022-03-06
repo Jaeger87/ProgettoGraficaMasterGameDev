@@ -64,9 +64,8 @@ private:
     void CreateWindowSizeDependentResources();
 
     void StartGame(int width, int height);
-    void initializeBricksLevel1();
-    void initializeBricksLevel2();
-    void cleanMemory();
+    void initializeLevel1();
+    void initializeLevel2();
     void restartGame();
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;

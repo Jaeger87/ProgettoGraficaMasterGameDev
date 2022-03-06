@@ -46,7 +46,7 @@ void Game::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATIO
 void Game::StartGame(int width, int height)
 {
     scoreManager = new ScoreManager();
-    sphere = new Sphere(new Vec2(width / 2, height * 0.65f));
+    sphere = new Sphere(new Vec2(width / 2, height * 0.65f), height);
     paddle = new Paddle(new Vec2(width * 0.84f / 2 - 32, height * 0.88f),64,16);
     leftWall = new Wall(new Vec2(0, 0), 20, height, Wall::WALLTYPE::LEFT);
     upWall = new Wall(new Vec2(0, 0), width * 0.84f, 20, Wall::WALLTYPE::UP);
@@ -58,10 +58,10 @@ void Game::StartGame(int width, int height)
     }
 
 
-    initializeBricksLevel2();
+    initializeLevel2();
 }
 
-void Game::initializeBricksLevel1()
+void Game::initializeLevel1()
 {
 
     for (int i = 0; i < bricksPerLevel; i++)
@@ -72,7 +72,7 @@ void Game::initializeBricksLevel1()
     }
 }
 
-void Game::initializeBricksLevel2()
+void Game::initializeLevel2()
 {
     for (int i = 0; i < bricksPerLevel; i++)
     {
@@ -85,13 +85,10 @@ void Game::initializeBricksLevel2()
     }
 }
 
-void Game::cleanMemory()
-{
-
-}
-
 void Game::restartGame()
 {
+    gameOver = false;
+    scoreManager->resetScore();
 
 }
 
@@ -149,14 +146,6 @@ void Game::Update(DX::StepTimer const& timer)
         }
 
     }
-    
-
-
-
-
-
-    
-
 
     PIXEndEvent();
 }
@@ -189,6 +178,27 @@ void Game::Render()
     paddle->display(m_spriteBatch, m_batch);
     
     scoreManager->displayPoints(m_spriteBatch);
+
+    if (gameOver)
+    {
+        const wchar_t* outputGameOver = L"Game Over";
+
+        Vec2 originGameOver = m_font->MeasureString(outputGameOver) / 2.f;
+        auto size = m_deviceResources->GetOutputSize();
+        Vec2 m_fontPos = Vec2(float(size.right)* 0.84f / 2.f, float(size.bottom) / 2.f);
+
+        m_font->DrawString(m_spriteBatch.get(), outputGameOver,
+            m_fontPos, Colors::White, 0.f, originGameOver);
+
+        const wchar_t* outputRestart = L"Press R to restart";
+
+        Vec2 m_RestartPos = Vec2(float(size.right) * 0.84f / 2.f, float(size.bottom) / 2.f + 50);
+        Vec2 originRestart = m_font->MeasureString(outputRestart) / 2.f;
+        Vec2 scaleFont = Vec2(0.35f, 0.35f);
+
+        m_font->DrawString(m_spriteBatch.get(), outputRestart,
+            m_RestartPos, Colors::White, 0.f, originRestart, scaleFont);
+    }
 
     m_spriteBatch->End();
 

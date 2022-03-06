@@ -16,6 +16,7 @@ private:
 
 public:
 	void addPoints(int points);
+	void resetScore();
 	void displayPoints(SpriteBatchAlias& i_spriteBatch);
 	void setPosition(float i_X, float i_Y);
 	static void setupFont(std::unique_ptr<DirectX::SpriteFont>* i_texture);

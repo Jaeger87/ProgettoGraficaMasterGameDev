@@ -8,6 +8,12 @@ Paddle::Paddle(Vec2* position, float length, float height) : Rect(position, leng
 
 }
 
+void Paddle::setPosition(float i_x, float i_y)
+{
+    position->x = i_x;
+    position->y = i_y;
+}
+
 void Paddle::setupTexture(Texture* i_texture)
 {
     m_texture = i_texture;

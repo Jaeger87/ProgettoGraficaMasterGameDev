@@ -8,6 +8,11 @@ void ScoreManager::addPoints(int points)
 	m_Score += points;
 }
 
+void ScoreManager::resetScore()
+{
+	m_Score = 0;
+}
+
 void ScoreManager::displayPoints(SpriteBatchAlias& i_spriteBatch)
 {
 	Vec2 scaleFont = Vec2(0.4f, 0.4f);
