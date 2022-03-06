@@ -14,6 +14,25 @@ Brick::Brick(Vec2* position, LIFEBRICK i_life, ScoreManager* i_scoreManager) : R
         m_scoreValue = 100;
 }
 
+Brick::Brick(Vec2* position, ScoreManager* i_scoreManager) : Rect(position, BWIDTH, BHEIGHT)
+{
+    life = LIFEBRICK::DEAD;
+    m_ScoreManager = i_scoreManager;
+}
+
+void Brick::SetData(float i_x, float i_y, LIFEBRICK i_life)
+{
+    position->x = i_x;
+    position->y = i_y;
+
+    life = i_life;
+
+    if (life == LIFEBRICK::FULL)
+        m_scoreValue = 200;
+    else
+        m_scoreValue = 100;
+}
+
 void Brick::setupTexture(Texture* i_FullLifeTexture, Texture* i_HalfLifeTexture)
 {
     m_texture_FullLife = i_FullLifeTexture;

@@ -52,17 +52,23 @@ void Game::StartGame(int width, int height)
     upWall = new Wall(new Vec2(0, 0), width * 0.84f, 20, Wall::WALLTYPE::UP);
     rightWall = new Wall(new Vec2(width * 0.84f - 20, 0), 20, height, Wall::WALLTYPE::RIGHT);
     bricks = new Brick*[bricksPerLevel];
+    for (int i = 0; i < bricksPerLevel; i++)
+    {
+        bricks[i] = new Brick(new Vec2(), scoreManager);
+    }
+
 
     initializeBricksLevel2();
 }
 
 void Game::initializeBricksLevel1()
 {
+
     for (int i = 0; i < bricksPerLevel; i++)
     {
         int x = startBricksX + (i % bricksPerRow) * Brick::BWIDTH + paddingBrikcs;
         int y = startBricksY + (i / bricksPerRow) * Brick::BHEIGHT + paddingBrikcs;
-        bricks[i] = new Brick(new Vec2(x, y), Brick::LIFEBRICK::HALF, scoreManager);
+        bricks[i]->SetData(x,y, Brick::LIFEBRICK::HALF);
     }
 }
 
@@ -75,7 +81,7 @@ void Game::initializeBricksLevel2()
 
         Brick::LIFEBRICK life = (i / bricksPerRow) % 2 == 0 ? Brick::LIFEBRICK::FULL : Brick::LIFEBRICK::HALF;
 
-        bricks[i] = new Brick(new Vec2(x, y), life, scoreManager);
+        bricks[i]->SetData(x, y, life);
     }
 }
 
@@ -139,7 +145,7 @@ void Game::Update(DX::StepTimer const& timer)
     {
         if (kb.R)
         {
-
+            restartGame();
         }
 
     }

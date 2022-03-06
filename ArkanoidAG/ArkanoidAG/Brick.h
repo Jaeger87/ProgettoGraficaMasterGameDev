@@ -17,6 +17,8 @@ public:
 	enum LIFEBRICK { FULL, HALF, DEAD };
 	LIFEBRICK life;
 	Brick(Vec2* position, LIFEBRICK i_life, ScoreManager* i_scoreManager);
+	Brick(Vec2* position, ScoreManager* i_scoreManager);
+	void SetData(float i_x, float i_y, LIFEBRICK i_life);
 	void display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer) override;
 	static void setupTexture(Texture* i_FullLifeTexture, Texture* i_HalfLifeTexture);
 	static void Reset();
