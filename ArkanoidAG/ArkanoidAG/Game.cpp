@@ -45,6 +45,7 @@ void Game::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATIO
 
 void Game::StartGame(int width, int height)
 {
+    scoreManager = new ScoreManager();
     sphere = new Sphere(new Vec2(width / 2, height * 0.65f));
     paddle = new Paddle(new Vec2(width * 0.84f / 2 - 32, height * 0.88f),64,16);
     leftWall = new Wall(new Vec2(0, 0), 20, height, Wall::WALLTYPE::LEFT);
@@ -148,14 +149,7 @@ void Game::Render()
     sphere->display(m_spriteBatch, m_batch);
     paddle->display(m_spriteBatch, m_batch);
     
-    const wchar_t* output = L"Score";
-
-    Vec2 origin = m_font->MeasureString(output) / 2.f;
-
-    Vec2 scaleFont = Vec2(0.4f, 0.4f);
-
-    m_font->DrawString(m_spriteBatch.get(), output,
-        m_fontPos, Colors::White, 0.f, origin, scaleFont);
+    scoreManager->displayPoints(m_spriteBatch);
 
     m_spriteBatch->End();
 
@@ -271,12 +265,13 @@ void Game::CreateDeviceDependentResources()
 
     // TODO: Initialize device dependent objects here (independent of window size).
 
-    m_font = std::make_unique<SpriteFont>(device, L"Assets/myfile.spritefont");
+    
 
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_textureSphere = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_texturePaddle = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_textureBrickHalf = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>* m_textureBrickFull = new Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>();
+
 
     auto context = m_deviceResources->GetD3DDeviceContext();
     m_spriteBatch = std::make_unique<SpriteBatch>(context);
@@ -365,7 +360,9 @@ void Game::CreateDeviceDependentResources()
     m_stars = std::make_unique<ScrollingBackground>();
     m_stars->Load(m_backgroundTex.Get());
 
-    
+    m_font = std::make_unique<SpriteFont>(device, L"Assets/myfile.spritefont");
+
+    scoreManager->setupFont(&m_font);
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -377,10 +374,9 @@ void Game::CreateWindowSizeDependentResources()
     m_screenPos.x = float(size.right) / 2.f;
     m_screenPos.y = float(size.bottom) / 2.f;
 
-    m_stars->SetWindow(size.right - 120, size.bottom);
+    m_stars->SetWindow(size.right - size.right * 0.15, size.bottom);
 
-    m_fontPos.x = float(size.right) * 0.92;
-    m_fontPos.y = float(size.bottom) * 0.20;
+    scoreManager->setPosition(float(size.right) * 0.92, float(size.bottom) * 0.20);
 }
 
 
@@ -389,18 +385,16 @@ void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
     m_spriteBatch.reset();
-    m_font.reset();
     m_batch.reset();
     m_effect.reset();
     m_states.reset();
     m_inputLayout.Reset();
     m_stars.reset();
     m_backgroundTex.Reset();
-    sphere->Reset();
-    paddle->Reset();
-
-    for (int i = 0; i < bricksPerLevel; i++)
-        bricks[i]->Reset();
+    Sphere::Reset();
+    Paddle::Reset();
+    Brick::Reset();
+    ScoreManager::Reset();
 }
 
 void Game::OnDeviceRestored()

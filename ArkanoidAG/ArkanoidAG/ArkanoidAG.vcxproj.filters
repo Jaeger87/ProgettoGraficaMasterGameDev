@@ -40,7 +40,7 @@
     <ClCompile Include="Wall.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="GameManager.cpp">
+    <ClCompile Include="ScoreManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,7 +71,7 @@
     <ClInclude Include="Wall.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="GameManager.h">
+    <ClInclude Include="ScoreManager.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="ScrollingBackground.h">

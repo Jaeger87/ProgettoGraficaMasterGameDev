@@ -10,6 +10,7 @@
 #include "Sphere.h"
 #include "Paddle.h"
 #include "Wall.h"
+#include "ScoreManager.h"
 
 using VertexType = DirectX::VertexPositionColor;
 using Matrix = DirectX::SimpleMath::Matrix;
@@ -77,6 +78,7 @@ private:
     Wall* leftWall;
     Wall* upWall;
     Wall* rightWall;
+    ScoreManager* scoreManager;
     Brick** bricks;
 
     std::unique_ptr<DirectX::Keyboard> m_keyboard;
@@ -90,7 +92,6 @@ private:
     std::unique_ptr<ScrollingBackground> m_stars;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_backgroundTex;
     std::unique_ptr<DirectX::SpriteFont> m_font;
-    DirectX::SimpleMath::Vector2 m_fontPos;
 
     const float paddleMovementDelta = 5.0f;
     const int bricksPerLevel = 90;
