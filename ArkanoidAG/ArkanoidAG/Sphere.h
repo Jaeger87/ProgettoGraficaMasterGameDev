@@ -22,6 +22,7 @@ private:
 	float deathLine;
 public:
 	Sphere(Vec2* _position, float displayHeight);
+	void resetSphere(float i_x, float i_y);
 	bool checkRectCollision(Rect& rect);
 	void update(Paddle& paddle, Brick** bricks, int bricksLength, Wall& leftWall, Wall& upWall, Wall& rightWall);
 	void display(SpriteBatchAlias& i_spriteBatch, VertexDrawer& i_Drawer) override;

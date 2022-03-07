@@ -13,6 +13,14 @@ Sphere::Sphere(Vec2* _position, float displayHeight) : Entity(_position)
     velocity = Vec2(1.0f, 1.0f);
 }
 
+void Sphere::resetSphere(float i_x, float i_y)
+{
+    position->x = i_x;
+    position->y = i_y;
+    alive = true;
+
+}
+
 bool Sphere::checkRectCollision(Rect& rect)
 {
     Vec2 leftTop = Vec2(rect.position->x, rect.position->y);

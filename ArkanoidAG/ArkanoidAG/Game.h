@@ -64,8 +64,8 @@ private:
     void CreateWindowSizeDependentResources();
 
     void StartGame(int width, int height);
-    void initializeLevel1();
-    void initializeLevel2();
+    void initializeLevel1(int width, int height);
+    void initializeLevel2(int width, int height);
     void restartGame();
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;

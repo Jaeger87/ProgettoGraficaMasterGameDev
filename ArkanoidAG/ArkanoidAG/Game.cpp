@@ -58,12 +58,14 @@ void Game::StartGame(int width, int height)
     }
 
 
-    initializeLevel2();
+    initializeLevel1(width, height);
 }
 
-void Game::initializeLevel1()
+void Game::initializeLevel1(int width, int height)
 {
-
+    sphere->resetSphere(width / 2, height * 0.65f);
+    paddle->setPosition(width * 0.84f / 2 - 32, height * 0.88f);
+    gameOver = false;
     for (int i = 0; i < bricksPerLevel; i++)
     {
         int x = startBricksX + (i % bricksPerRow) * Brick::BWIDTH + paddingBrikcs;
@@ -72,8 +74,9 @@ void Game::initializeLevel1()
     }
 }
 
-void Game::initializeLevel2()
+void Game::initializeLevel2(int width, int height)
 {
+    gameOver = false;
     for (int i = 0; i < bricksPerLevel; i++)
     {
         int x = startBricksX + (i % bricksPerRow) * Brick::BWIDTH + paddingBrikcs;
@@ -89,6 +92,8 @@ void Game::restartGame()
 {
     gameOver = false;
     scoreManager->resetScore();
+    auto size = m_deviceResources->GetOutputSize();
+    initializeLevel1(size.right, size.bottom);
 
 }
 
