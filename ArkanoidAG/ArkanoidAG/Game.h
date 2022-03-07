@@ -54,6 +54,9 @@ public:
     
 
 private:
+    enum ARKANOIDLEVEL { ONE, TWO };
+
+    ARKANOIDLEVEL m_CurrentLevel;
 
     void Update(DX::StepTimer const& timer);
     void Render();
@@ -67,6 +70,7 @@ private:
     void initializeLevel1(int width, int height);
     void initializeLevel2(int width, int height);
     void restartGame();
+    void nextLevel();
     // Device resources.
     std::unique_ptr<DX::DeviceResources>    m_deviceResources;
 
@@ -106,4 +110,5 @@ private:
     int highScore = 0;
 
     bool gameOver = false;
+    bool levelFinish = false;
 };

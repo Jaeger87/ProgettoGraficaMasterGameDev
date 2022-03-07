@@ -63,9 +63,11 @@ void Game::StartGame(int width, int height)
 
 void Game::initializeLevel1(int width, int height)
 {
+    levelFinish = false;
     sphere->resetSphere(width / 2, height * 0.65f);
     paddle->setPosition(width * 0.84f / 2 - 32, height * 0.88f);
     gameOver = false;
+    m_CurrentLevel = ARKANOIDLEVEL::ONE;
     for (int i = 0; i < bricksPerLevel; i++)
     {
         int x = startBricksX + (i % bricksPerRow) * Brick::BWIDTH + paddingBrikcs;
@@ -76,7 +78,11 @@ void Game::initializeLevel1(int width, int height)
 
 void Game::initializeLevel2(int width, int height)
 {
+    levelFinish = false;
+    sphere->resetSphere(width / 2, height * 0.65f);
+    paddle->setPosition(width * 0.84f / 2 - 32, height * 0.88f);
     gameOver = false;
+    m_CurrentLevel = ARKANOIDLEVEL::TWO;
     for (int i = 0; i < bricksPerLevel; i++)
     {
         int x = startBricksX + (i % bricksPerRow) * Brick::BWIDTH + paddingBrikcs;
@@ -95,6 +101,17 @@ void Game::restartGame()
     auto size = m_deviceResources->GetOutputSize();
     initializeLevel1(size.right, size.bottom);
 
+}
+
+void Game::nextLevel()
+{
+    auto size = m_deviceResources->GetOutputSize();
+
+    if (m_CurrentLevel == ARKANOIDLEVEL::ONE)
+        initializeLevel2(size.right, size.bottom);
+    else
+        initializeLevel1(size.right, size.bottom);
+    
 }
 
 #pragma region Frame Update
@@ -125,7 +142,13 @@ void Game::Update(DX::StepTimer const& timer)
         ExitGame();
     }
 
-    if (!gameOver)
+    if (kb.D6)
+    {
+        auto size = m_deviceResources->GetOutputSize();
+        initializeLevel2(size.right, size.bottom);
+    }
+
+    if (!gameOver && !levelFinish)
     {
         if (kb.Left)
         {
@@ -141,6 +164,18 @@ void Game::Update(DX::StepTimer const& timer)
 
         if (!sphere->isAlive())
             gameOver = true;
+
+        bool allBricksDestroyed = true;
+        for (int i = 0; i < bricksPerLevel; i++)
+        {
+            if (bricks[i]->isAlive())
+            {
+                allBricksDestroyed = false;
+                break;
+            }
+        }
+
+        levelFinish = allBricksDestroyed;
     }
 
     else
@@ -203,6 +238,27 @@ void Game::Render()
 
         m_font->DrawString(m_spriteBatch.get(), outputRestart,
             m_RestartPos, Colors::White, 0.f, originRestart, scaleFont);
+    }
+
+    if (levelFinish)
+    {
+        const wchar_t* outputCongratulation = L"Congratulation!";
+
+        Vec2 originGameOver = m_font->MeasureString(outputCongratulation) / 2.f;
+        auto size = m_deviceResources->GetOutputSize();
+        Vec2 m_fontPos = Vec2(float(size.right) * 0.84f / 2.f, float(size.bottom) / 2.f);
+
+        m_font->DrawString(m_spriteBatch.get(), outputCongratulation,
+            m_fontPos, Colors::White, 0.f, originGameOver);
+
+        const wchar_t* outputNext = L"Press N for next level";
+
+        Vec2 m_NextPos = Vec2(float(size.right) * 0.84f / 2.f, float(size.bottom) / 2.f + 50);
+        Vec2 originNext = m_font->MeasureString(outputNext) / 2.f;
+        Vec2 scaleFont = Vec2(0.35f, 0.35f);
+
+        m_font->DrawString(m_spriteBatch.get(), outputNext,
+            m_NextPos, Colors::White, 0.f, originNext, scaleFont);
     }
 
     m_spriteBatch->End();
